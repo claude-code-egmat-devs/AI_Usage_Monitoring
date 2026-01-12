@@ -1,0 +1,79 @@
+# GitHub Actions Workflow: Teams Notification on Push
+# 
+# Copy this file to any repo's .github/workflows/ directory to enable push notifications
+#
+# Required Secrets (set in repo Settings > Secrets and variables > Actions):
+#   - POWER_AUTOMATE_URL: Your Power Automate HTTP trigger URL
+#   - TEAMS_CHAT_ID: Teams chat ID for notifications
+#   - AGENT_EMAIL: Email to tag in Teams message
+#
+# Setup Instructions:
+#   1. Copy this file to: your-repo/.github/workflows/notify-on-push.yml
+#   2. Go to your repo: Settings > Secrets and variables > Actions
+#   3. Add the three secrets listed above
+#   4. Push to main/master branch to test
+#
+# For more info, see: github-deploy-notifier repository
+
+name: Teams Push Notification
+
+on:
+  push:
+    branches: [main, master]
+  # Optional: also notify on version tags
+  # push:
+  #   tags:
+  #     - 'v*'
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Get commit info
+        id: commit_info
+        run: |
+          echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "message=$(git log -1 --format=%s)" >> $GITHUB_OUTPUT
+          echo "author=$(git log -1 --format=%an)" >> $GITHUB_OUTPUT
+          echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
+
+      - name: Get version tag
+        id: version
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "${{ github.ref_name }}")
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Send Teams notification
+        env:
+          POWER_AUTOMATE_URL: ${{ secrets.POWER_AUTOMATE_URL }}
+          TEAMS_CHAT_ID: ${{ secrets.TEAMS_CHAT_ID }}
+          AGENT_EMAIL: ${{ secrets.AGENT_EMAIL }}
+        run: |
+          # Format the message
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S UTC')
+
+          MESSAGE="📤 **Code Push**
+
+          **Repo:** ${REPO_NAME}
+          **Version:** ${{ steps.version.outputs.tag }}
+          **Author:** ${{ steps.commit_info.outputs.author }}
+          **Commit:** ${{ steps.commit_info.outputs.hash }}
+          **Time:** ${TIMESTAMP}"
+
+          # Send to Power Automate
+          curl -X POST "$POWER_AUTOMATE_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"chat_id\": \"$TEAMS_CHAT_ID\",
+              \"agent_email\": \"$AGENT_EMAIL\",
+              \"message_body\": \"$MESSAGE\"
+            }"
+
+          echo "Notification sent!"
