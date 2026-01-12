@@ -85,58 +85,67 @@ def send_daily_report(report_data):
     """
     date_str = report_data.get('date', datetime.now().strftime('%Y-%m-%d'))
 
-    message = f"""**AI Usage Daily Report - {date_str}**
-
-**📱 Apps Summary:**
-"""
-
-    # Add app breakdown
+    # Build HTML table for apps
     apps = report_data.get('apps', {})
+    apps_table = """<table>
+<tr><th>App</th><th>Requests</th><th>Tokens</th><th>Cost</th></tr>
+"""
     for app_name, app_data in apps.items():
         requests_count = app_data.get('requests', 0)
         tokens = app_data.get('total_tokens', 0)
         cost = app_data.get('total_cost', 0)
-        message += f"\n• **{app_name}**: {requests_count} requests | {tokens:,} tokens | ${cost:.2f}"
+        short_name = app_name.replace('_', ' ')
+        apps_table += f"<tr><td>{short_name}</td><td>{requests_count}</td><td>{tokens:,}</td><td>${cost:.2f}</td></tr>\n"
+    apps_table += "</table>"
 
-    # Add model breakdown
-    message += "\n\n**📈 Model Usage:**"
+    # Build HTML table for models
     models = report_data.get('models', {})
+    models_table = """<table>
+<tr><th>Model</th><th>Calls</th><th>Cost</th></tr>
+"""
     for model_name, model_data in models.items():
         calls = model_data.get('calls', 0)
         cost = model_data.get('cost', 0)
         short_name = model_name.replace('claude-', '').replace('-20250929', '').replace('-20251001', '')
-        message += f"\n• {short_name}: {calls} calls (${cost:.2f})"
+        models_table += f"<tr><td>{short_name}</td><td>{calls}</td><td>${cost:.2f}</td></tr>\n"
+    models_table += "</table>"
 
-    # Add budget status
+    # Budget status
     today_cost = report_data.get('today_cost', 0)
     month_cost = report_data.get('month_cost', 0)
     budget = report_data.get('budget', 100)
     budget_percent = (month_cost / budget * 100) if budget > 0 else 0
 
-    message += f"""
-
-**💰 Budget Status:**
-• Today: ${today_cost:.2f}
-• Month-to-date: ${month_cost:.2f} / ${budget:.2f} ({budget_percent:.0f}%)
-"""
-
-    # Add status
+    # Determine status
     settings = load_settings()
     thresholds = settings.get('thresholds', {})
     daily_warning = thresholds.get('daily_warning_usd', 5)
     daily_critical = thresholds.get('daily_critical_usd', 10)
 
     if today_cost >= daily_critical:
-        status = "🚨 **CRITICAL** - Daily cost exceeded critical threshold!"
+        status = "🚨 CRITICAL"
         msg_type = "critical"
     elif today_cost >= daily_warning:
-        status = "⚠️ **WARNING** - Daily cost exceeded warning threshold"
+        status = "⚠️ WARNING"
         msg_type = "warning"
     else:
-        status = "✅ **Normal** - All within limits"
+        status = "✅ Normal"
         msg_type = "info"
 
-    message += f"\n**Status:** {status}"
+    message = f"""<b>📊 AI Usage Daily Report - {date_str}</b>
+
+<b>📱 Apps Summary</b>
+{apps_table}
+
+<b>📈 Model Usage</b>
+{models_table}
+
+<b>💰 Budget Status</b>
+<table>
+<tr><td>Today</td><td><b>${today_cost:.2f}</b></td></tr>
+<tr><td>Month-to-date</td><td>${month_cost:.2f} / ${budget:.2f} ({budget_percent:.0f}%)</td></tr>
+<tr><td>Status</td><td><b>{status}</b></td></tr>
+</table>"""
 
     return send_teams_message(message, msg_type)
 
