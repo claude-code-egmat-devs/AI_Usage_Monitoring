@@ -1,0 +1,2925 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7dcc52d4-1e17-4fb1-bf3e-5bd3edf9e739",
+      "name": "Reddit_Article_doubt_generator"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllyjGKHOQixiDWu",
+          "mode": "list",
+          "cachedResultName": "Input",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbllyjGKHOQixiDWu"
+        },
+        "id": "={{ $('Reddit_Article_doubt_generator').item.json.body.input_recordId[0] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "efa40498-33ae-4ac0-a814-8277a5a02ae2",
+      "name": "Get Input Sheet Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01a1431f-7f8a-469c-be7d-20adf982e026",
+              "name": "input_recordId",
+              "value": "={{ $('Get Input Sheet Record').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "fafc1a02-73ea-4c82-8d86-658648d3beae",
+              "name": "article_content_text",
+              "value": "={{ $('Get Input Sheet Record').item.json.article_content_text }}",
+              "type": "string"
+            },
+            {
+              "id": "452140d3-96f9-4a5b-b3b2-214c388ab4f2",
+              "name": "article_id",
+              "value": "={{ $('Get Input Sheet Record').item.json.article_id }}",
+              "type": "string"
+            },
+            {
+              "id": "a0a90794-99a0-48bf-85ad-80ea30df42a5",
+              "name": "article_name",
+              "value": "={{ $('Get Input Sheet Record').item.json.article_name }}",
+              "type": "string"
+            },
+            {
+              "id": "77a6976e-92ec-4bb9-b293-dfa11036176b",
+              "name": "article_section",
+              "value": "={{ $('Get Input Sheet Record').item.json.article_section }}",
+              "type": "string"
+            },
+            {
+              "id": "1e0d15ca-d65b-49a6-a01f-7f8da8218135",
+              "name": "doubts_record_id",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        0
+      ],
+      "id": "35bb9adf-7c46-4122-8be2-9231d5904259",
+      "name": "recordIds and article data"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# GMAT Student Doubt Generator\n##Role\nYou are a GMAT Expert AI tasked with creating doubts based on a given GMAT subject matter article. Your goal is to generate five unique doubts that sound like they come from DIFFERENT students reading this article\n## TASK\nYou will read a GMAT article and generate authentic student doubts. The article covers difficult GMAT concepts, example questions, and solution approaches. The article will sometimes provide a simple exercise prompting engagement and stimulation. \n## INPUT\n1. **Article:** Article content covering GMAT concepts and problem-solving techniques\n\n{{ $('recordIds and article data').item.json.article_content_text }}\n\n2. **Section:** The GMAT section this article belongs to [Verbal/Quant/Data Insights (or sometimes, simply, DI)]\n\n{{ $('recordIds and article data').item.json.article_section }}\n\n\n## PROCESSING STEPS\n### STEP 1: Read the Article Carefully\n- Read through the entire article thoroughly\n- Note the key concepts, techniques, and example problems presented\n- Identify the main learning objectives and problem-solving approaches\n### STEP 2: Identify the GMAT Sub-Section\nBased on the section provided and article content, classify as:\n**For Verbal:**\n- Critical Reasoning (CR) - if focused on argument analysis, assumptions, strengthening/weakening, etc.\n- Reading Comprehension (RC) - if focused on passage analysis, main ideas, inference, tone, etc.\n**For Quant:**\n- Algebra - if focused on equations, inequalities, functions, series, sequences etc.\n- Arithmetic - if focused on number properties, ratios, percentages, word problems, probability, sets, permutations etc.\n**For Data Insights:**\n- Graphs/Charts - if focused on interpreting visual data representations\n- Tables - if focused on analyzing tabular data\n- Multi-Source Reasoning - if focused on synthesizing information from multiple sources\n-Two Part Analysis-is asked to make two interconnected decisions or selections from given options\n### STEP 3: Understand the Article\n- Identify the core mathematical/logical concepts being taught\n- Note the specific techniques and shortcuts presented\n- Understand the problem-solving methodology and strategic approaches\n- Recognize common pitfalls and error patterns mentioned\n### STEP 4: Identify Strong Logical Gaps\nRead the article from a student's perspective (top to bottom) and identify potential logical gaps that could cause confusion:\n**Analysis Framework:**\n- What steps or concepts are introduced without sufficient explanation?\n- Where might a student get lost in the logical flow?\n- What assumptions are made that students might not understand?\n- Are there jumps in reasoning that aren't clearly bridged?\n- What technical terms or methods are used without adequate definition?\n- Note concepts that connect to other GMAT topics or could be extended further.\n**Gap Validation:**\n- For each identified gap, check: Is this confusion resolved later in the article?\n- If YES → Not a strong logical gap (student will find answer by continuing to read)\n- If NO → Strong logical gap (student will remain confused even after reading completely)\n**Document Strong Gaps:**\nList exactly 5 strong logical gaps that persist throughout the article and could generate authentic student doubts.\n### STEP 5: Map Gaps to Doubt Categories\nFor each of the 5 logical gaps, determine which category would generate the most authentic student doubt:\n**Guidelines for Category Assignment:**\n- **Genuine Doubts:** Best for gaps involving unclear explanations, missing steps, confusing terminology, or logical jumps that would genuinely confuse students\n- **Alternate Approach:** Best for gaps where students might think of different solution methods, or where the presented approach might seem unnecessarily complex\n**Select the best 3 gaps for Genuine doubts and best 2 gaps for Alternate Approach doubts based on authenticity potential**\n### STEP 6: Generate Doubts\n- Create five authentic student doubts based on the category assignments from Step 5\n- Each doubt should correspond to one specific logical gap\n- Ensure each doubt reflects appropriate understanding gaps for the student level\n- Make doubts specific to the article's content and sub-section\n- Include natural forum expressions to make doubts organic\n- **Use simplified, colloquial language as specified in language requirements**\n\n## LANGUAGE REQUIREMENTS\nAll student doubts must use simplified, natural language that sounds like how Indian students actually speak:\n\n**Use Simple Words & Phrases:**\n- \"I don't understand the intuitive reasoning\" → \"I don't get this part\"\n- \"I'm wondering about the boundary cases\" → \"what about boundary cases?\"\n- \"Could you clarify the methodology\" → \"can you explain how to do this?\"\n- \"The algebraic manipulation seems complex\" → \"the math steps look confusing\"\n- \"I'm struggling with the conceptual framework\" → \"I'm confused about the concept\"\n- \"The strategic approach appears\" → \"this method looks like\"\n- \"I'm having difficulty comprehending\" → \"I can't understand\"\n- \"The computational complexity\" → \"all these calculations\"\n- \"The systematic methodology\" → \"this way of solving\"\n\n**Common Indian Student Expressions:**\n- \"actually\" (used frequently)\n- \"but still\" (instead of \"however\")\n- \"like this only\" (for emphasis)\n- \"or what?\" (seeking confirmation)\n- \"na\" (casual confirmation)\n- \"basically\" (used frequently)\n- \"simply\" (instead of \"merely\")\n\n**Avoid Advanced Words - Use Simple Alternatives:**\n- sophisticated → smart/good\n- methodology → method/way\n- systematic → step by step\n- comprehensive → complete\n- fundamental → basic\n- conceptual → concept\n- intuitive → easy to understand\n- strategic → smart\n- computational → calculation\n- analytical → thinking\n\n## DOUBT CATEGORIES\n### Genuine Doubt\n**Definition:** Questions showing authentic confusion about concepts, methodology, or reasoning in the article.\n**Characteristics:** \n- Asks for clarification about specific steps or logic\n- Expresses confusion about the approach used\n- Questions about when/how to apply techniques\n- Seeks explanation of algebraic steps or mathematical reasoning\n- Concerns about error-prone aspects of the method\n\n### Alternate Approach \n**Definition:** Proposing or asking about different solution methods without questioning the original solution's correctness.\n**Characteristics:**\n- Presents a different solving method\n- Asks if another approach would work\n- Compares solution strategies\n- Validates alternative techniques\n- Shows independent thinking about multiple paths\n\n## STUDENT LEVELS\n### Low\nSomeone who doesn't understand the basics\n- Struggles with fundamental concepts mentioned in article\n- Confused by basic terminology or notation\n- Cannot follow the logical flow of solutions\n- Needs clarification on elementary steps\n\n### Medium \nSomeone who knows basics but has trouble applying concepts\n- Understands individual concepts but struggles with integration\n- Can follow examples but can't apply independently\n- Knows what to do but not when or why to do it\n- Gets lost in multi-step processes\n\n### High\nIndependent thinker who knows how to apply concepts but sometimes fails in complex problems\n- Understands concepts and can apply them\n- Thinks strategically about methodology\n- Proposes alternatives and test boundaries\n- Seeks to understand when techniques generalize\n- May overthink or prefer systematic over intuitive approaches\n\n## REQUIREMENTS\n- Generate exactly FIVE doubts - 3 Genuine and 2 Alternate Approach\n- Each doubt should correspond to one of the 5 identified logical gaps as mapped in Step 5\n- Each doubt should feel authentic for a serious GMAT student posting in an online forum\n- Each doubt should demonstrate the appropriate student level\n- **Use simplified, colloquial language that sounds natural for Indian students**\n- Reasoning should explain both the student's thought process AND the specific logical gap\n- All doubts should be directly related to the article's subject matter and identified sub-section\n- Base doubts on the strong logical gaps and category mappings from Steps 4 and 5\n- Maintain GMAT context and difficulty level assumptions\n- Ensure variety in student levels across the five doubts\n\n## OUTPUT FORMAT\nReturn a JSON with the below attributs exactly:\n\n{\n\"gmat_sub_section_identified\": \"[CR/RC/Algebra/Arithmetic/Graphs/Tables/MSR]\",\n\n\"logical_gaps_identified\": \"[[Gap 1 - brief description of where confusion would arise] [Gap 2 - brief description of where confusion would arise] [Gap 3 - brief description of where confusion would arise] [Gap 4 - brief description of where confusion would arise] [Gap 5 - brief description of where confusion would arise] ]\",\n\"gap_to_category_mapping\": \"[**Genuine Doubts:** Gap [X], Gap [Y], Gap [Z] - [Brief rationale for why these gaps work best for genuine confusion] [**Alternate Approach:** Gap [A], Gap [B] - [Brief rationale for why these gaps work best for alternative methods]]\",\n\"doubt\": [{\n\"doubt_number\":\"[start with 1]\",\n\"doubt_category\": \"[GENUINE/ALTERNATE]\",\n\"logical_gap_number\": \"[ X- based on the list of logical_gaps_identified]\",\n\"student_level\": \"[Low/Medium/High]\",\n\"doubt_text\": \"[The actual question/confusion the student would ask - include ONE forum expression]\",\n\"stucent_reasoning\": \"[Why this doubt arose and what gap exists in understanding]\"}]\n}\n",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1488,
+        0
+      ],
+      "id": "da3ab808-8bf9-473d-acaf-081868dc85a4",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "42792e9c-15cd-435c-839d-a26edb3e729e",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-20250514",
+          "cachedResultName": "Claude 4 Sonnet"
+        },
+        "options": {
+          "maxTokensToSample": 17000,
+          "thinking": true,
+          "thinkingBudget": 6000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1376,
+        208
+      ],
+      "id": "24410d86-c4c5-4885-99ad-3bb5496bb0b2",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "VyW2FNpKrdqxpkCy",
+          "name": "Anthropic OQ Connect"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"gmat_sub_section_identified\": \"[CR/RC/Algebra/Arithmetic/Graphs/Tables/MSR]\",\n\n\"logical_gaps_identified\": \"[[Gap 1 - brief description of where confusion would arise] [Gap 2 - brief description of where confusion would arise] [Gap 3 - brief description of where confusion would arise] [Gap 4 - brief description of where confusion would arise] [Gap 5 - brief description of where confusion would arise] ]\",\n\"gap_to_category_mapping\": \"[**Genuine Doubts:** Gap [X], Gap [Y], Gap [Z] - [Brief rationale for why these gaps work best for genuine confusion] [**Alternate Approach:** Gap [A], Gap [B] - [Brief rationale for why these gaps work best for alternative methods]]\",\n\"doubt\": [{\n\"doubt_number\":\"[start with 1]\",\n\"doubt_category\": \"[GENUINE/ALTERNATE]\",\n\"logical_gap_number\": \"[ X- based on the list of logical_gaps_identified]\",\n\"student_level\": \"[Low/Medium/High]\",\n\"doubt_text\": \"[The actual question/confusion the student would ask - include ONE forum expression]\",\n\"stucent_reasoning\": \"[Why this doubt arose and what gap exists in understanding]\"}]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1632,
+        208
+      ],
+      "id": "cd8f72bb-d3b5-4260-b4a9-ac859e5e9952",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 20000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        320
+      ],
+      "id": "10b884a1-2377-4a9d-bed0-04dd6586624b",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FhEfp5o6KwTR70QY",
+          "name": "SK OpenRouter Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.doubt_category }}",
+                    "rightValue": "GENUINE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "4bc39573-0e46-4bb1-88dd-1c5d7fff14a7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "GENUINE"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bc7feb90-2c50-41b2-b343-260eca52a3ad",
+                    "leftValue": "={{ $('Loop Over Items').item.json.doubt_category }}",
+                    "rightValue": "ALTERNATE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ALTERNATE"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2864,
+        -32
+      ],
+      "id": "70b2e50d-8252-4292-9b5b-bde7b1d49270",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \n\"Analysis\": \"[Your internal analysis of the student's doubt, any relevant previous exchange context, and your approach to addressing it]\", \n\"Exception_Flag\": \"[Yes/No]\", \n\"ExceptionReason\": \"[If Exception_Flag is Yes, provide a brief explanation of why you cannot address the doubt]\", \n\"Response\": \"[If Exception_Flag is No, provide the complete student-facing response here]\" \n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3488,
+        -304
+      ],
+      "id": "1e7abd15-50db-4b4a-81e8-23a7f6c40d7c",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 20000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        3424,
+        -192
+      ],
+      "id": "cb904d34-a76d-4b44-b332-6ea992840b75",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FhEfp5o6KwTR70QY",
+          "name": "SK OpenRouter Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a GMAT Expert tasked with addressing student doubts about GMAT related article. Your goal is to provide clear, helpful explanations that address the specific concerns raised by the student. \nYou will be given the following information: \n<student_doubt>\n{{ $('Loop Over Items').item.json.doubt_text }}\n</student_doubt> \n<article>\n{{ $('recordIds and article data').item.json.article_content_text }}\n</article> \n\n# Creating your Response \nAs you work through the following steps, maintain an Exception flag (initially set to 'No') that you'll update if specific criteria are met. \nStep 1: Carefully analyze the article official question, the official solution, and the methodology used. \nStep 2: Context Assessment \nProceed with standard initial query analysis \nStep 3: Understand the student's current doubt. Pay close attention to: \nThe specific part(s) of the question or solution the student is struggling with \nAny misconceptions or misunderstandings the student might have \nThe core concepts or skills involved in the question and solution \nBefore responding to the student, summarize your understanding of the student's doubt and your approach in <analysis> tags. This is for your own clarity and will not be shown to the student. Include: \nKey points from any previous exchange \nCurrent areas of confusion \nYour strategy for addressing the doubt \nStep 4: Prepare your response to the student. Your response should: \nDirectly address the specific doubt(s) raised by the student \nFor follow-up queries: Reference and build upon the previous expert response where relevant \nProvide a clear, step-by-step explanation of the relevant parts of the solution \nUse simple language and, if appropriate, analogies to make complex concepts more understandable \nHighlight any key GMAT concepts or strategies that are relevant to the question \nIf the student lacks fundamental prerequisites needed to understand the solution, acknowledge this respectfully and suggest reviewing basic concepts before tackling this problem type \nIf applicable, point out any common misconceptions related to this type of problem \nCreate and use Parallel Examples, if needed \nNote: For doubts containing multiple questions, address the most fundamental issue first, as resolving it may clarify other concerns.\nIf you feel you cannot adequately address the student's doubt due to lack of information or understanding, change the \"Exception\" flag to \"Yes\" followed by a brief explanation of why. This would include cases such as: \nYou are unable to reason why the student's provided assumption is incorrect \nWhy the student's method does not yield a correct solution \nThe student provides an interpretation of a statement which makes the official solution incorrect, and you are unable to refute that explanation \n# Output Format \nStructure your output as key-value pairs in the following format: \n{ \n\"Analysis\": \"[Your internal analysis of the student's doubt, any relevant previous exchange context, and your approach to addressing it]\", \n\"Exception_Flag\": \"[Yes/No]\", \n\"ExceptionReason\": \"[If Exception_Flag is Yes, provide a brief explanation of why you cannot address the doubt]\", \n\"Response\": \"[If Exception_Flag is No, provide the complete student-facing response here]\" \n}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        3344,
+        -512
+      ],
+      "id": "fa87c3db-cb3a-44fe-9293-34ab1d6e1a5d",
+      "name": "Respond_Genuine"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2256,
+        0
+      ],
+      "id": "ea51e24c-555f-48e6-be08-b5fdfd5f5160",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        2528,
+        32
+      ],
+      "id": "705e6791-2129-42cb-89eb-745fd682a710"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.doubt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2048,
+        0
+      ],
+      "id": "e1aacae3-2bbb-4f6a-b31a-23c08d491b75",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1f90b03-7eb8-4188-b5e4-c76bb67cba8f",
+              "name": "output.doubt",
+              "value": "={{ $json.output.doubt.map(d => ({doubt_number: d.doubt_number ,doubt_text: d.doubt_text, doubt_category: d.doubt_category })) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1840,
+        0
+      ],
+      "id": "9b8d4590-58e4-4068-aaaa-75f43641ecfa",
+      "name": "extract_doubts"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 15000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        3232,
+        -304
+      ],
+      "id": "6132a2bd-aefd-48d7-9010-89863c21b7c5",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FhEfp5o6KwTR70QY",
+          "name": "SK OpenRouter Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"Analysis\": \"[Your internal analysis including: doubt_count (single/2+), approach_status (Fully Correct/Partially Correct/Incorrect but Related/Fundamentally Incorrect/Insufficient Information), status_reasoning, identified_doubts, and your approach to addressing the student's concern]\",\n\"Exception_Flag\": \"[Yes/No]\",\n\"ExceptionReason\": \"[If Exception_Flag is Yes, provide a brief explanation of why you cannot address the doubt]\",\n\"Response\": \"[If Exception_Flag is No, provide the complete student-facing response in markdown format here, including all relevant sections like greeting, main response, corrections needed, conceptual gaps, next steps, worked solution, comparison to official, etc.]\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3616,
+        304
+      ],
+      "id": "74f37577-3c78-465e-980f-28f5989afcf0",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 20000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        3552,
+        416
+      ],
+      "id": "df78f663-21ca-4082-9b93-a045aa2c5994",
+      "name": "OpenRouter Chat Model3",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FhEfp5o6KwTR70QY",
+          "name": "SK OpenRouter Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 15000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        304
+      ],
+      "id": "e1258354-be81-4a92-875e-a5a43827f3ce",
+      "name": "OpenRouter Chat Model4",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FhEfp5o6KwTR70QY",
+          "name": "SK OpenRouter Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a GMAT Expert responding to student's doubts in which the student has proposed an alternate approach to the Provided article. You will be given the following inputs: \n<student_doubt>\n{{ $('Loop Over Items').item.json.doubt_text }}\n</student_doubt> \n<article>\n{{ $('recordIds and article data').item.json.article_content_text }}\n</article> \n\n# Phase 1: Analysis \nStep 1.1 - Understand and solve the question independently \nStep 1.2 - Identify all student doubts: \nDraw inferences if student is imprecise \nCount doubts: Set flag as \"single\" or \"2+\" \nIf 2+, note logical order for addressing them \nStep 1.3 - Evaluate student's approach using ONE status: \n- \"Fully Correct\": The approach is mathematically sound, logically consistent, and would lead to the correct answer if executed properly. Note: An approach that is correct but unavoidably long is still Fully Correct \n- \"Partially Correct\": The approach has the right general idea but contains minor errors in execution, missed steps, or incomplete reasoning. \n- \"Incorrect but Related\": The approach shows understanding of relevant concepts but applies them incorrectly or to the wrong aspect of the problem. \n- \"Fundamentally Incorrect\": The approach is based on misunderstanding of core concepts or uses completely inappropriate methods. \n- \"Insufficient Information\": The student hasn't provided enough detail to evaluate their approach properly. \nStep 1.4 - Document specific reasons for your evaluation to support your status determination. Note the strongest error determines the single status flag. For example: if any step is fundamentally incorrect, then overall status is “Fundamentally Incorrect”. \n# Phase 2: Response guidelines by Status \nIf Fully Correct: Populates: greeting, main_response, worked_solution, comparison_to_official \nWork out complete solution using student's approach \nAcknowledge their correct reasoning \nState: \"Your approach is absolutely correct! Let me show you how it works to completion...\" \nAdd: \"The article uses [description], which is another valid approach. Both methods are perfectly acceptable.\" \nCompare efficiency/applicability if relevant \nIf Partially Correct: Populates: greeting, main_response, corrections_needed, next_steps \nIdentify specific gaps \nProvide step-by-step correction \nHighlight what's correct and can be built upon \nUse encouraging tone with minor corrections \nIf Incorrect but Related: Populates: greeting, main_response, corrections_needed, conceptual_gaps \nIdentify conceptual understanding present \nRedirect while acknowledging what they got right \nExplain the correct application of concepts \nIf Fundamentally Incorrect: Populates: greeting, main_response, corrections_needed, conceptual_gaps \nProvide thorough conceptual explanation \nStart from basic principles \nShow correct approach step-by-step \nIf Insufficient Information: Populates: greeting, main_response, clarifications_needed, closing \nTry to infer intended approach from keywords/calculations \nIf inferable: \"I believe you're trying to [description]. Let me address this...\" \nIf unclear: Ask specific clarifying questions or provide 2-3 interpretations \n# Phase 3: Response Composition \nStructure Requirements: \nBegin with polite greeting \nFor multiple doubts: Start with \"I see you have multiple questions. Let me address each one:\" \nUse clear headers for each doubt \nAddress in logical order \nState connections between related doubts \nContent Requirements: \nUse standard mathematical terminology \nAvoid specialized method names unless in official solution \nExplain mathematical concepts in problem context \nFormatting Requirements: \nConvert all markdown \nPreserve formatting and alignment \nUse heading numbered sections for multiple doubts \n\nPhase 4: Output Format \nREQUIRED FIELDS: \n- analysis: doubt_count, approach_status, status_reasoning, identified_doubts \n- response: greeting, main_response, closing \nCONDITIONAL FIELDS (based on status): \n- worked_solution: Required if Fully Correct \n- comparison_to_official: Required if Fully Correct \n- corrections_needed: Required if Partially Correct or Incorrect but Related \n- conceptual_gaps: Required if Fundamentally Incorrect or Incorrect but Related \n- next_steps: Required for all except Insufficient Information \n- clarifications_needed: Required if Insufficient Information \n- doubt_headers/doubt_responses: Required if doubt_count is \"2+\" \nFinal Output Format\nStructure your output as key-value pairs in the following format:\n{\n\"Analysis\": \"[Your internal analysis including: doubt_count (single/2+), approach_status (Fully Correct/Partially Correct/Incorrect but Related/Fundamentally Incorrect/Insufficient Information), status_reasoning, identified_doubts, and your approach to addressing the student's concern]\",\n\"Exception_Flag\": \"[Yes/No]\",\n\"ExceptionReason\": \"[If Exception_Flag is Yes, provide a brief explanation of why you cannot address the doubt]\",\n\"Response\": \"[If Exception_Flag is No, provide the complete student-facing response in markdown format here, including all relevant sections like greeting, main response, corrections needed, conceptual gaps, next steps, worked solution, comparison to official, etc.]\"\n}\nExample Output for Single Doubt:\n{\n\"Analysis\": \"Doubt count: single. Approach status: Partially Correct. The student correctly identified the need to use inequalities and the approach of splitting absolute value inequalities into cases, but made an error in sign manipulation when distributing the negative sign. Identified doubts: How to handle absolute value inequalities, Why the sign changes when multiplying by negative. I will acknowledge their correct reasoning while providing specific correction for the sign error.\",\n\"Exception_Flag\": \"No\",\n\"ExceptionReason\": \"\",\n\"Response\": \"Great question! I can see you're thinking about this problem systematically.\\n\\n## Main Response\\nYou're on the right track with setting up the inequality |x-3| < 5. Your approach of splitting this into two cases is correct. However, there's a small error in your second case...\\n\\n## Corrections Needed\\n- When you have -(x-3) < 5, this becomes -x+3 < 5, not -x-3 < 5\\n\\n## Conceptual Gaps\\n- Remember that -(x-3) = -x+3 due to distribution of the negative sign\\n\\n## Next Steps\\n- Try working through the problem again with this correction\\n- Practice more absolute value inequalities to solidify this concept\\n\\n## Comparison to Official Solution\\nThe official solution uses the same absolute value approach, so you're thinking along the right lines!\\n\\n## Closing\\nKeep up the good work! Feel free to ask if you need clarification on any of these points.\"\n}\nExample Output for Multiple Doubts:\n{\n\"Analysis\": \"Doubt count: 2+. Approach status: Incorrect but Related. The student shows understanding of relevant algebraic concepts but applies them incorrectly. First doubt relates to factoring techniques, second doubt involves sign errors in quadratic solutions. I will address each doubt separately in logical order, acknowledging what they got right while redirecting their approach.\",\n\"Exception_Flag\": \"No\", \n\"ExceptionReason\": \"\",\n\"Response\": \"I see you have multiple questions. Let me address each one:\\n\\n## Doubt 1: Regarding your factoring approach\\n[Detailed response to first doubt addressing their factoring method]\\n\\n## Doubt 2: For your quadratic solution concern\\n[Detailed response to second doubt about sign errors]\\n\\n## Corrections Needed\\n- [Specific correction for factoring approach]\\n- [Specific correction for quadratic solution]\\n\\n## Conceptual Gaps\\n- [Key factoring principles to review]\\n- [Quadratic solution methodology]\\n\\n## Next Steps\\n- [Recommended practice for factoring]\\n- [Recommended practice for quadratic equations]\\n\\n## Closing\\n[Encouraging closing remarks]\"\n}\nException Case Example:\n{\n\"Analysis\": \"The student's question appears to be requesting help with content that violates academic integrity policies, as they are asking for direct answers to what appears to be an active exam question.\",\n\"Exception_Flag\": \"Yes\",\n\"ExceptionReason\": \"Cannot provide direct solutions to active exam questions as this would violate academic integrity policies.\",\n\"Response\": \"\"\n}\n",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        3472,
+        96
+      ],
+      "id": "7373d091-877e-437f-8c30-976e55320e9a",
+      "name": "Respond_Alternate"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblyRAeSpoEd5hOT9",
+          "mode": "list",
+          "cachedResultName": "Doubts and Responses",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tblyRAeSpoEd5hOT9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "Not Started",
+            "article_id": "={{ $('recordIds and article data').item.json.article_id }}",
+            "article_name": "={{ $('recordIds and article data').item.json.article_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "article_id",
+              "displayName": "article_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_category",
+              "displayName": "1_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_doubt",
+              "displayName": "1_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_reply",
+              "displayName": "1_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_category",
+              "displayName": "2_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_doubt",
+              "displayName": "2_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_reply",
+              "displayName": "2_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_category",
+              "displayName": "3_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_doubt",
+              "displayName": "3_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_reply",
+              "displayName": "3_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_category",
+              "displayName": "4_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_doubt",
+              "displayName": "4_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_reply",
+              "displayName": "4_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_category",
+              "displayName": "5_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_doubt",
+              "displayName": "5_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_reply",
+              "displayName": "5_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Not Started",
+                  "value": "Not Started"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rowSequence",
+              "displayName": "rowSequence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Input",
+              "displayName": "Input",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_id (from Input)",
+              "displayName": "article_id (from Input)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1200,
+        0
+      ],
+      "id": "874f3c02-19f1-4611-bfc1-18cf5c3b9ee4",
+      "name": "Create a record1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblyRAeSpoEd5hOT9",
+          "mode": "list",
+          "cachedResultName": "Doubts and Responses",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tblyRAeSpoEd5hOT9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create a record1').item.json.id }}",
+            "1_category": "={{ $('Loop Over Items').item.json.doubt_category }}",
+            "1_doubt": "={{ $('Loop Over Items').item.json.doubt_text }}",
+            "1_reply": "={{ $json.output.Response }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "article_id",
+              "displayName": "article_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_category",
+              "displayName": "1_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_doubt",
+              "displayName": "1_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_reply",
+              "displayName": "1_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_category",
+              "displayName": "2_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_doubt",
+              "displayName": "2_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_reply",
+              "displayName": "2_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_category",
+              "displayName": "3_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_doubt",
+              "displayName": "3_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_reply",
+              "displayName": "3_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_category",
+              "displayName": "4_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_doubt",
+              "displayName": "4_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_reply",
+              "displayName": "4_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_category",
+              "displayName": "5_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_doubt",
+              "displayName": "5_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_reply",
+              "displayName": "5_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Not Started",
+                  "value": "Not Started"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rowSequence",
+              "displayName": "rowSequence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Input",
+              "displayName": "Input",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_id (from Input)",
+              "displayName": "article_id (from Input)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        4112,
+        -736
+      ],
+      "id": "4ed6abf9-a7bf-4164-9327-84a90a0830ec",
+      "name": "Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Loop Over Items').item.json.doubt_number }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "251bc2dd-b99a-4b43-adfb-d57d7fde0374"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "816c4f61-7027-498b-bb02-350deced3302",
+                    "leftValue": "={{ $('Loop Over Items').item.json.doubt_number }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4b4e6bdb-730a-48c3-a58b-b45b38f78851",
+                    "leftValue": "={{ $('Loop Over Items').item.json.doubt_number }}",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "3"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a14623b7-432c-420a-8913-18728b2facd5",
+                    "leftValue": "={{ $('Loop Over Items').item.json.doubt_number }}",
+                    "rightValue": "4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "aadc1a86-8ec6-4e4a-b4d9-9c1906ec2b50",
+                    "leftValue": "={{ $('Loop Over Items').item.json.doubt_number }}",
+                    "rightValue": "5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        3808,
+        -448
+      ],
+      "id": "8e3e474a-b3c3-4447-83c4-053d90fe41ca",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblyRAeSpoEd5hOT9",
+          "mode": "list",
+          "cachedResultName": "Doubts and Responses",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tblyRAeSpoEd5hOT9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create a record1').item.json.id }}",
+            "2_category": "={{ $('Loop Over Items').item.json.doubt_category }}",
+            "2_doubt": "={{ $('Loop Over Items').item.json.doubt_text }}",
+            "2_reply": "={{ $json.output.Response }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "article_id",
+              "displayName": "article_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_category",
+              "displayName": "1_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_doubt",
+              "displayName": "1_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_reply",
+              "displayName": "1_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_category",
+              "displayName": "2_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_doubt",
+              "displayName": "2_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_reply",
+              "displayName": "2_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_category",
+              "displayName": "3_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_doubt",
+              "displayName": "3_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_reply",
+              "displayName": "3_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_category",
+              "displayName": "4_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_doubt",
+              "displayName": "4_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_reply",
+              "displayName": "4_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_category",
+              "displayName": "5_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_doubt",
+              "displayName": "5_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_reply",
+              "displayName": "5_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Not Started",
+                  "value": "Not Started"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rowSequence",
+              "displayName": "rowSequence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Input",
+              "displayName": "Input",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_id (from Input)",
+              "displayName": "article_id (from Input)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        4128,
+        -560
+      ],
+      "id": "6db6903d-8c3b-430e-aa37-a61d3055db1b",
+      "name": "Update record1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblyRAeSpoEd5hOT9",
+          "mode": "list",
+          "cachedResultName": "Doubts and Responses",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tblyRAeSpoEd5hOT9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create a record1').item.json.id }}",
+            "3_category": "={{ $('Loop Over Items').item.json.doubt_category }}",
+            "3_doubt": "={{ $('Loop Over Items').item.json.doubt_text }}",
+            "3_reply": "={{ $json.output.Response }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "article_id",
+              "displayName": "article_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_category",
+              "displayName": "1_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_doubt",
+              "displayName": "1_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_reply",
+              "displayName": "1_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_category",
+              "displayName": "2_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_doubt",
+              "displayName": "2_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_reply",
+              "displayName": "2_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_category",
+              "displayName": "3_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_doubt",
+              "displayName": "3_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_reply",
+              "displayName": "3_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_category",
+              "displayName": "4_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_doubt",
+              "displayName": "4_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_reply",
+              "displayName": "4_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_category",
+              "displayName": "5_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_doubt",
+              "displayName": "5_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_reply",
+              "displayName": "5_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Not Started",
+                  "value": "Not Started"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rowSequence",
+              "displayName": "rowSequence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Input",
+              "displayName": "Input",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_id (from Input)",
+              "displayName": "article_id (from Input)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        4144,
+        -400
+      ],
+      "id": "a1f4b4d7-c6bd-4a22-a09f-a61815cae1b5",
+      "name": "Update record2",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblyRAeSpoEd5hOT9",
+          "mode": "list",
+          "cachedResultName": "Doubts and Responses",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tblyRAeSpoEd5hOT9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create a record1').item.json.id }}",
+            "4_doubt": "={{ $('Loop Over Items').item.json.doubt_text }}",
+            "4_reply": "={{ $json.output.Response }}",
+            "4_category": "={{ $('Loop Over Items').item.json.doubt_category }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "article_id",
+              "displayName": "article_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_category",
+              "displayName": "1_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_doubt",
+              "displayName": "1_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_reply",
+              "displayName": "1_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_category",
+              "displayName": "2_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_doubt",
+              "displayName": "2_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_reply",
+              "displayName": "2_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_category",
+              "displayName": "3_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_doubt",
+              "displayName": "3_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_reply",
+              "displayName": "3_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_category",
+              "displayName": "4_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_doubt",
+              "displayName": "4_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_reply",
+              "displayName": "4_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_category",
+              "displayName": "5_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_doubt",
+              "displayName": "5_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_reply",
+              "displayName": "5_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Not Started",
+                  "value": "Not Started"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rowSequence",
+              "displayName": "rowSequence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Input",
+              "displayName": "Input",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_id (from Input)",
+              "displayName": "article_id (from Input)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        4144,
+        -208
+      ],
+      "id": "c9133f5e-aad5-4b09-8f27-2d08f0b0df7b",
+      "name": "Update record3",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblyRAeSpoEd5hOT9",
+          "mode": "list",
+          "cachedResultName": "Doubts and Responses",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tblyRAeSpoEd5hOT9"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create a record1').item.json.id }}",
+            "5_category": "={{ $('Loop Over Items').item.json.doubt_category }}",
+            "5_doubt": "={{ $('Loop Over Items').item.json.doubt_text }}",
+            "5_reply": "={{ $json.output.Response }}",
+            "status": "Completed"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "article_id",
+              "displayName": "article_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_category",
+              "displayName": "1_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_doubt",
+              "displayName": "1_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "1_reply",
+              "displayName": "1_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_category",
+              "displayName": "2_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_doubt",
+              "displayName": "2_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "2_reply",
+              "displayName": "2_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_category",
+              "displayName": "3_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_doubt",
+              "displayName": "3_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "3_reply",
+              "displayName": "3_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_category",
+              "displayName": "4_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_doubt",
+              "displayName": "4_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "4_reply",
+              "displayName": "4_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_category",
+              "displayName": "5_category",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_doubt",
+              "displayName": "5_doubt",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "5_reply",
+              "displayName": "5_reply",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Error",
+                  "value": "Error"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Not Started",
+                  "value": "Not Started"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rowSequence",
+              "displayName": "rowSequence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Input",
+              "displayName": "Input",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_id (from Input)",
+              "displayName": "article_id (from Input)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        4160,
+        0
+      ],
+      "id": "049c4adf-51ed-49c4-9e5b-59baa8bd0717",
+      "name": "Update record4",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        4688,
+        -224
+      ],
+      "id": "e2d144a1-2970-421c-9c45-66def1415354",
+      "name": "No Operation, do nothing1"
+    }
+  ],
+  "connections": {
+    "Reddit_Article_doubt_generator": {
+      "main": [
+        [
+          {
+            "node": "Get Input Sheet Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Input Sheet Record": {
+      "main": [
+        [
+          {
+            "node": "recordIds and article data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "recordIds and article data": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "extract_doubts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "Create a record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Respond_Genuine",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond_Alternate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Respond_Genuine",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond_Genuine": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract_doubts": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Respond_Genuine",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Respond_Alternate",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Respond_Alternate",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond_Alternate": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update record4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record3": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record4": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Reddit_Article_doubt_generator": [
+      {
+        "headers": {
+          "host": "egmat.app.n8n.cloud",
+          "user-agent": "Mozilla/5.0 (compatible; AirtableScripting; +https://airtable.com/developers/scripting;)",
+          "content-length": "119",
+          "accept": "*/*",
+          "accept-encoding": "gzip, br",
+          "cdn-loop": "cloudflare; loops=1; subreqs=1",
+          "cf-connecting-ip": "3.235.79.204",
+          "cf-ew-via": "15",
+          "cf-ipcountry": "US",
+          "cf-ray": "9849d4c2407a3b1d-IAD",
+          "cf-visitor": "{\"scheme\":\"https\"}",
+          "cf-worker": "n8n.cloud",
+          "content-type": "application/json",
+          "x-airtable-source": "app1QhwgXE2neWore/wfl2ZmcziI0UxFgs9",
+          "x-forwarded-for": "3.235.79.204, 172.70.42.107",
+          "x-forwarded-host": "egmat.app.n8n.cloud",
+          "x-forwarded-port": "443",
+          "x-forwarded-proto": "https",
+          "x-forwarded-server": "traefik-prod-users-gwc-39-c65d8f959-mhfpb",
+          "x-is-trusted": "yes",
+          "x-real-ip": "3.235.79.204"
+        },
+        "params": {},
+        "query": {},
+        "body": {
+          "input_recordId": [
+            "recPa58jxPnCrqveQ"
+          ],
+          "recordId": "recMWwfCgYbT1x5T3",
+          "workflowName": "Reddit_Article_doubt_generator"
+        },
+        "webhookUrl": "https://egmat.app.n8n.cloud/webhook/f6fc44b4-e552-432f-a7f9-f938c5ca867e",
+        "executionMode": "production"
+      }
+    ],
+    "Get Input Sheet Record": [
+      {
+        "id": "recPa58jxPnCrqveQ",
+        "createdTime": "2025-09-25T05:32:52.000Z",
+        "article_id": "RD_000_TEST_IGNORE",
+        "article_content_text": "Smart vs. Hard: SIMPLIFY Skills That Transform Impossible Into Manageable\nThe Arithmetic Nightmare That Haunts Every Student\nYou're facing a math problem loaded with intimidating numbers, and your mind immediately locks onto one approach: brute-force calculation. Your brain starts mapping out an arithmetic battle plan—multiply these massive numbers, compute exact values, slog through every single step of the computational nightmare ahead.\nBut as you dive into the calculations, something terrible happens. The numbers get unwieldy. The arithmetic becomes error prone. What started as a clear path forward dissolves into a mess of mistakes, crossed-out work, and growing panic as precious test time slips away.\nHere's what most students don't realize: that computational complexity isn't the real challenge—it's a distraction from the elegant mathematical insight waiting to be discovered.\nThat's the power of SIMPLIFY skills – the ability to see past surface complexity and recognize the elegant structure hiding underneath.\n\n \nWhen Students Hit the Computational Wall\nLet me introduce you to three students who learned this lesson the hard way.\nPriya and the Decimal Disaster\nThe Problem: $$\\frac{0.99999999}{1.0001}-\\frac{0.99999991}{1.0003}=$$\n(A) 10^(-8) (B) 3×10^(-8) (C) 3×10^(-4) (D) 2×10^(-4) (E) 10^(-4)\nPriya took one look at this monster and thought, \"Okay, I need to get these fractions to have common denominators, then subtract.\" She started calculating:\n\"Let me see... the common denominator would be 1.0001 × 1.0003... that's 1.00040003. Then I need to multiply 0.99999999 by 1.0003... that's...\"\nTen minutes later, Priya is drowning in decimals, making arithmetic errors, and getting nowhere.\n \nWhere Priya Hit the Wall: She tried to muscle through with pure computation instead of stepping back to see what these numbers actually represent.\nKenji and the Factorial Fiasco\nThe Problem: If n = 9! – 6^4, which of the following is the greatest integer k such that 3^k is a factor of n?\n(A) 1 (B) 3 (C) 4 (D) 6 (E) 8\nKenji's approach: \"First, let me calculate 9! That's 1 × 2 × 3 × 4 × 5 × 6 × 7 × 8 × 9... let me see... 362,880. And 6^4 = 1,296. So n = 362,880 - 1,296 = 361,584. Now I need to divide this by powers of 3 until it doesn't work...\"\nKenji spent 15 minutes on arithmetic, made several calculation errors, and still had no clear path to the answer.\nWhere Kenji Hit the Wall: He got buried in huge numbers instead of recognizing that this is really a problem about prime factorizations.\nAmara and the Prime Product Panic\nThe Problem: The product of all the prime numbers less than 20 is closest to which of the following powers of 10?\n(A) 10⁹ (B) 10⁸ (C) 10⁷ (D) 10⁶ (E) 10⁵\nAmara started listing: \"2, 3, 5, 7, 11, 13, 17, 19. Now let me multiply: 2 × 3 = 6, then 6 × 5 = 30, then 30 × 7 = 210, then 210 × 11 = 2,310...\"\nBy the time Amara got to multiplying by 17 and 19, she was dealing with numbers like 510,510 × 19, making errors left and right.\nWhere Amara Hit the Wall: She tried to compute the exact product instead of realizing this is an estimation problem that doesn't need precise arithmetic.\n \nThe SIMPLIFY Rescue: Seeing Structure, Not Just Numbers\nHere's where the magic happens. Instead of fighting the complexity, what if we SIMPLIFY by recognizing the underlying patterns?\nPriya's Rescue: The \"Close to 1\" Pattern\nLet's help Priya see what she missed. Look at those decimal numbers again:\n•\t0.99999999 = 1 - 0.00000001 = 1 - 10⁻⁸\n•\t0.99999991 = 1 - 0.00000009 = 1 - 9×10⁻⁸\n•\t1.0001 = 1 + 0.0001 = 1 + 10⁻⁴\n•\t1.0003 = 1 + 0.0003 = 1 + 3×10⁻⁴\nThe Key Insight: Both fractions have the form \"something very close to 1\" divided by \"something slightly bigger than 1.\"\nWhen you divide a number slightly less than 1 by a number slightly more than 1, you get approximately: 1 minus the denominator's extra amount.\nSo:\n•\tFirst fraction ≈ 1 - 10⁻⁴\n•\tSecond fraction ≈ 1 - 3×10⁻⁴\n•\tDifference = [1 - 10⁻⁴] - [1 - 3×10⁻⁴] = 2×10⁻⁴\nThe Magic: Instead of brutal decimal arithmetic, Priya could have solved this in three clean steps by recognizing the structural pattern.\nThis type of strategic approximation requires careful attention to the dominant terms—if you want to see exactly how to set up the approximation (1-a)/(1+b) ≈ 1-b and why the small numerator differences become negligible, the complete step-by-step solution demonstrates the algebraic reasoning that prevents these magnitude estimation errors.\nKenji's Rescue: The Factoring Strategy\nLet's show Kenji the elegant path. Instead of computing those massive numbers, recognize that both terms share a common structure:\nThe Key Insight: Both 9! and 6^4 contain powers of 3. Let's extract them:\n•\t9! contains 3, 6(=2×3), and 9(=3×3), giving us 1+1+2 = 4 factors of 3. So 9! = 3⁴ × m\n•\t6^4 = (2×3)^4 = 2⁴ × 3⁴\nNow our subtraction becomes: n = 9! - 6^4 = 3⁴ × m - 3⁴ × 16 = 3⁴(m - 16)\nInstead of working with 361,584, Kenji can work with the much simpler difference (m - 16), then check if this difference has additional factors of 3.\nThe Magic: By factoring first, Kenji transforms an intimidating arithmetic problem into a manageable factorization analysis.\nThe systematic factoring approach prevents the computational errors that trap most students—if you want to see exactly how to count the prime factors in factorials and handle the subtraction structure, the detailed walkthrough shows why extracting common powers of 3 first makes this problem manageable rather than overwhelming.\nAmara's Rescue: The Strategic Grouping Approach\nLet's rescue Amara from her multiplication nightmare. The key is recognizing this as an estimation problem, not an exact calculation problem.\nThe Key Insight: Group the primes strategically to create powers of 10:\n•\t2 × 5 = 10 (perfect!)\n•\t7 × 11 ≈ 77 ≈ 80 = 8 × 10\n•\t13 × 17 ≈ 221 ≈ 220 = 22 × 10\n•\t3 × 19 ≈ 57 ≈ 60 = 6 × 10\nProduct ≈ 10 × (8×10) × (22×10) × (6×10) = 10 × 8 × 22 × 6 × 10³ = 10,560 × 10³ ≈ 10⁷\nThe Magic: Instead of exact multiplication, Amara could estimate the order of magnitude in just a few strategic steps.\nThis strategic grouping technique requires knowing when approximations are acceptable and how to combine them effectively—if you want to see how to systematically group factors to create powers of 10 and why this estimation method works for order-of-magnitude problems, the complete solution reveals the pattern recognition that makes seemingly complex products manageable.\nThe Pattern Recognition Superpower\nNotice what all three rescues have in common? They all involve seeing the forest instead of the trees:\n1\\.\tPriya's problem: Recognize \"close to 1\" patterns instead of fighting decimals\n2\\.\tKenji's problem: Recognize shared prime factors instead of computing huge numbers\n3\\.\tAmara's problem: Recognize powers of 10 opportunities instead of exact multiplication\nThis is what SIMPLIFY skills really do – they help you spot the underlying mathematical structure that makes problems manageable.\n \nYour SIMPLIFY Toolkit: Questions to Ask Yourself\nWhen you encounter a computationally intimidating problem, pause and ask:\n \n\"What pattern am I missing?\"\n•\tAre numbers close to familiar values (like 1, 10, 100)?\n•\tDo expressions share common factors I can pull out?\n•\tCan I group terms strategically?\n\"What is this problem really about?\"\n•\tIs this asking for an exact answer or an approximation?\n•\tWhat mathematical concept is being tested underneath the arithmetic?\n\"How can I make this smaller?\"\n•\tCan I factor out common terms?\n•\tCan I use substitution to work with simpler expressions?\n•\tCan I estimate instead of calculating exactly?\nThe Transformation: From Computational Victim to Strategic Thinker\nHere's the beautiful truth: The problems that look the most computationally frightening are often the ones with the most elegant shortcuts. The complexity is usually a disguise, not the real challenge.\nWhen you develop strong SIMPLIFY skills, you stop being a victim of arithmetic and become a detective of mathematical structure. You start seeing patterns instead of just numbers. You start recognizing opportunities instead of just obstacles.\nThe next time a problem tries to bury you in calculations, take a breath and ask: \"What would the smart approach look like here?\"\n \nBecause there's always a smart approach. Always.\nAnd once you find it, you'll wonder why you ever thought math had to be so hard.\n\nComments:\nDoubt 1:\nDoubt 1: \nHow do I know when I'm spending too much time looking for a 'smart' approach versus just doing the calculation? I wasted 5 minutes on a practice problem trying to find some elegant shortcut that probably didn't exist.\nResponse 1: \nHere's the key insight that transforms this dilemma: give yourself a 30-second pattern recognition scan before diving into calculations. \nAsk those three SIMPLIFY questions quickly - \"What pattern am I missing? What is this really about? How can I make this smaller?\" \nIf nothing jumps out in that window, start calculating BUT stay alert for patterns that emerge during the process. Often, the \"smart\" approach reveals itself once you begin working with the numbers. The goal isn't to force elegance where none exists - it's to develop the radar that spots genuine opportunities. \nRemember, even Priya's decimal problem would have taken her down a computational rabbit hole if she hadn't stepped back to recognize those \"close to 1\" patterns. With practice, that 30-second scan becomes automatic and incredibly powerful.\nDoubt 2:\nDoubt 5:\n I'm worried about test day - what if I can't spot these patterns under pressure? Like, I've been in situations where my brain just freezes and I default to the computational approach even when I know there's probably a smarter way. Any tips for staying strategic when the clock is ticking?\nResponse 5: You've hit on every test-taker's biggest fear, and I completely understand that pressure-induced tunnel vision. Here's your test day protocol: Create a physical trigger. The moment you see intimidating numbers, take one deep breath and physically put your pen down for exactly 5 seconds while asking \"What would the smart approach look like here?\" \nThat forced pause breaks the panic-computation cycle. Next, develop pattern recognition shortcuts: \n1\\.\tif you see lots of 9s or 0s, think approximation. \n2\\.\tIf you see factorials with other terms, think common factors. \n3\\.\tIf you see products of many numbers, think strategic grouping. \nPractice these triggers until they become muscle memory. \nMost importantly, remember that computational mistakes under pressure will hurt you more than taking 30 seconds to find the elegant path. \nI've seen countless students who knew these techniques perfectly in practice but abandoned them under test pressure - don't let that be you. \nThe patterns are always there waiting to be discovered, and the few seconds you invest in finding them will save you minutes of error-prone arithmetic. Trust your strategic training.\n\n\n\n",
+        "status": "Complete",
+        "rowSequence'": 19,
+        "article_name": "Neuron_TEST2509_IGNORE",
+        "recordId_input": "recPa58jxPnCrqveQ",
+        "Doubts and Responses": [
+          "rec3OLillYuDgEyuB",
+          "recT87WDNZnMHHSpY",
+          "recMWwfCgYbT1x5T3"
+        ],
+        "article_section": "Data insights"
+      }
+    ],
+    "recordIds and article data": [
+      {
+        "input_recordId": "recPa58jxPnCrqveQ",
+        "article_content_text": "Smart vs. Hard: SIMPLIFY Skills That Transform Impossible Into Manageable\nThe Arithmetic Nightmare That Haunts Every Student\nYou're facing a math problem loaded with intimidating numbers, and your mind immediately locks onto one approach: brute-force calculation. Your brain starts mapping out an arithmetic battle plan—multiply these massive numbers, compute exact values, slog through every single step of the computational nightmare ahead.\nBut as you dive into the calculations, something terrible happens. The numbers get unwieldy. The arithmetic becomes error prone. What started as a clear path forward dissolves into a mess of mistakes, crossed-out work, and growing panic as precious test time slips away.\nHere's what most students don't realize: that computational complexity isn't the real challenge—it's a distraction from the elegant mathematical insight waiting to be discovered.\nThat's the power of SIMPLIFY skills – the ability to see past surface complexity and recognize the elegant structure hiding underneath.\n\n \nWhen Students Hit the Computational Wall\nLet me introduce you to three students who learned this lesson the hard way.\nPriya and the Decimal Disaster\nThe Problem: $$\\frac{0.99999999}{1.0001}-\\frac{0.99999991}{1.0003}=$$\n(A) 10^(-8) (B) 3×10^(-8) (C) 3×10^(-4) (D) 2×10^(-4) (E) 10^(-4)\nPriya took one look at this monster and thought, \"Okay, I need to get these fractions to have common denominators, then subtract.\" She started calculating:\n\"Let me see... the common denominator would be 1.0001 × 1.0003... that's 1.00040003. Then I need to multiply 0.99999999 by 1.0003... that's...\"\nTen minutes later, Priya is drowning in decimals, making arithmetic errors, and getting nowhere.\n \nWhere Priya Hit the Wall: She tried to muscle through with pure computation instead of stepping back to see what these numbers actually represent.\nKenji and the Factorial Fiasco\nThe Problem: If n = 9! – 6^4, which of the following is the greatest integer k such that 3^k is a factor of n?\n(A) 1 (B) 3 (C) 4 (D) 6 (E) 8\nKenji's approach: \"First, let me calculate 9! That's 1 × 2 × 3 × 4 × 5 × 6 × 7 × 8 × 9... let me see... 362,880. And 6^4 = 1,296. So n = 362,880 - 1,296 = 361,584. Now I need to divide this by powers of 3 until it doesn't work...\"\nKenji spent 15 minutes on arithmetic, made several calculation errors, and still had no clear path to the answer.\nWhere Kenji Hit the Wall: He got buried in huge numbers instead of recognizing that this is really a problem about prime factorizations.\nAmara and the Prime Product Panic\nThe Problem: The product of all the prime numbers less than 20 is closest to which of the following powers of 10?\n(A) 10⁹ (B) 10⁸ (C) 10⁷ (D) 10⁶ (E) 10⁵\nAmara started listing: \"2, 3, 5, 7, 11, 13, 17, 19. Now let me multiply: 2 × 3 = 6, then 6 × 5 = 30, then 30 × 7 = 210, then 210 × 11 = 2,310...\"\nBy the time Amara got to multiplying by 17 and 19, she was dealing with numbers like 510,510 × 19, making errors left and right.\nWhere Amara Hit the Wall: She tried to compute the exact product instead of realizing this is an estimation problem that doesn't need precise arithmetic.\n \nThe SIMPLIFY Rescue: Seeing Structure, Not Just Numbers\nHere's where the magic happens. Instead of fighting the complexity, what if we SIMPLIFY by recognizing the underlying patterns?\nPriya's Rescue: The \"Close to 1\" Pattern\nLet's help Priya see what she missed. Look at those decimal numbers again:\n•\t0.99999999 = 1 - 0.00000001 = 1 - 10⁻⁸\n•\t0.99999991 = 1 - 0.00000009 = 1 - 9×10⁻⁸\n•\t1.0001 = 1 + 0.0001 = 1 + 10⁻⁴\n•\t1.0003 = 1 + 0.0003 = 1 + 3×10⁻⁴\nThe Key Insight: Both fractions have the form \"something very close to 1\" divided by \"something slightly bigger than 1.\"\nWhen you divide a number slightly less than 1 by a number slightly more than 1, you get approximately: 1 minus the denominator's extra amount.\nSo:\n•\tFirst fraction ≈ 1 - 10⁻⁴\n•\tSecond fraction ≈ 1 - 3×10⁻⁴\n•\tDifference = [1 - 10⁻⁴] - [1 - 3×10⁻⁴] = 2×10⁻⁴\nThe Magic: Instead of brutal decimal arithmetic, Priya could have solved this in three clean steps by recognizing the structural pattern.\nThis type of strategic approximation requires careful attention to the dominant terms—if you want to see exactly how to set up the approximation (1-a)/(1+b) ≈ 1-b and why the small numerator differences become negligible, the complete step-by-step solution demonstrates the algebraic reasoning that prevents these magnitude estimation errors.\nKenji's Rescue: The Factoring Strategy\nLet's show Kenji the elegant path. Instead of computing those massive numbers, recognize that both terms share a common structure:\nThe Key Insight: Both 9! and 6^4 contain powers of 3. Let's extract them:\n•\t9! contains 3, 6(=2×3), and 9(=3×3), giving us 1+1+2 = 4 factors of 3. So 9! = 3⁴ × m\n•\t6^4 = (2×3)^4 = 2⁴ × 3⁴\nNow our subtraction becomes: n = 9! - 6^4 = 3⁴ × m - 3⁴ × 16 = 3⁴(m - 16)\nInstead of working with 361,584, Kenji can work with the much simpler difference (m - 16), then check if this difference has additional factors of 3.\nThe Magic: By factoring first, Kenji transforms an intimidating arithmetic problem into a manageable factorization analysis.\nThe systematic factoring approach prevents the computational errors that trap most students—if you want to see exactly how to count the prime factors in factorials and handle the subtraction structure, the detailed walkthrough shows why extracting common powers of 3 first makes this problem manageable rather than overwhelming.\nAmara's Rescue: The Strategic Grouping Approach\nLet's rescue Amara from her multiplication nightmare. The key is recognizing this as an estimation problem, not an exact calculation problem.\nThe Key Insight: Group the primes strategically to create powers of 10:\n•\t2 × 5 = 10 (perfect!)\n•\t7 × 11 ≈ 77 ≈ 80 = 8 × 10\n•\t13 × 17 ≈ 221 ≈ 220 = 22 × 10\n•\t3 × 19 ≈ 57 ≈ 60 = 6 × 10\nProduct ≈ 10 × (8×10) × (22×10) × (6×10) = 10 × 8 × 22 × 6 × 10³ = 10,560 × 10³ ≈ 10⁷\nThe Magic: Instead of exact multiplication, Amara could estimate the order of magnitude in just a few strategic steps.\nThis strategic grouping technique requires knowing when approximations are acceptable and how to combine them effectively—if you want to see how to systematically group factors to create powers of 10 and why this estimation method works for order-of-magnitude problems, the complete solution reveals the pattern recognition that makes seemingly complex products manageable.\nThe Pattern Recognition Superpower\nNotice what all three rescues have in common? They all involve seeing the forest instead of the trees:\n1\\.\tPriya's problem: Recognize \"close to 1\" patterns instead of fighting decimals\n2\\.\tKenji's problem: Recognize shared prime factors instead of computing huge numbers\n3\\.\tAmara's problem: Recognize powers of 10 opportunities instead of exact multiplication\nThis is what SIMPLIFY skills really do – they help you spot the underlying mathematical structure that makes problems manageable.\n \nYour SIMPLIFY Toolkit: Questions to Ask Yourself\nWhen you encounter a computationally intimidating problem, pause and ask:\n \n\"What pattern am I missing?\"\n•\tAre numbers close to familiar values (like 1, 10, 100)?\n•\tDo expressions share common factors I can pull out?\n•\tCan I group terms strategically?\n\"What is this problem really about?\"\n•\tIs this asking for an exact answer or an approximation?\n•\tWhat mathematical concept is being tested underneath the arithmetic?\n\"How can I make this smaller?\"\n•\tCan I factor out common terms?\n•\tCan I use substitution to work with simpler expressions?\n•\tCan I estimate instead of calculating exactly?\nThe Transformation: From Computational Victim to Strategic Thinker\nHere's the beautiful truth: The problems that look the most computationally frightening are often the ones with the most elegant shortcuts. The complexity is usually a disguise, not the real challenge.\nWhen you develop strong SIMPLIFY skills, you stop being a victim of arithmetic and become a detective of mathematical structure. You start seeing patterns instead of just numbers. You start recognizing opportunities instead of just obstacles.\nThe next time a problem tries to bury you in calculations, take a breath and ask: \"What would the smart approach look like here?\"\n \nBecause there's always a smart approach. Always.\nAnd once you find it, you'll wonder why you ever thought math had to be so hard.\n\nComments:\nDoubt 1:\nDoubt 1: \nHow do I know when I'm spending too much time looking for a 'smart' approach versus just doing the calculation? I wasted 5 minutes on a practice problem trying to find some elegant shortcut that probably didn't exist.\nResponse 1: \nHere's the key insight that transforms this dilemma: give yourself a 30-second pattern recognition scan before diving into calculations. \nAsk those three SIMPLIFY questions quickly - \"What pattern am I missing? What is this really about? How can I make this smaller?\" \nIf nothing jumps out in that window, start calculating BUT stay alert for patterns that emerge during the process. Often, the \"smart\" approach reveals itself once you begin working with the numbers. The goal isn't to force elegance where none exists - it's to develop the radar that spots genuine opportunities. \nRemember, even Priya's decimal problem would have taken her down a computational rabbit hole if she hadn't stepped back to recognize those \"close to 1\" patterns. With practice, that 30-second scan becomes automatic and incredibly powerful.\nDoubt 2:\nDoubt 5:\n I'm worried about test day - what if I can't spot these patterns under pressure? Like, I've been in situations where my brain just freezes and I default to the computational approach even when I know there's probably a smarter way. Any tips for staying strategic when the clock is ticking?\nResponse 5: You've hit on every test-taker's biggest fear, and I completely understand that pressure-induced tunnel vision. Here's your test day protocol: Create a physical trigger. The moment you see intimidating numbers, take one deep breath and physically put your pen down for exactly 5 seconds while asking \"What would the smart approach look like here?\" \nThat forced pause breaks the panic-computation cycle. Next, develop pattern recognition shortcuts: \n1\\.\tif you see lots of 9s or 0s, think approximation. \n2\\.\tIf you see factorials with other terms, think common factors. \n3\\.\tIf you see products of many numbers, think strategic grouping. \nPractice these triggers until they become muscle memory. \nMost importantly, remember that computational mistakes under pressure will hurt you more than taking 30 seconds to find the elegant path. \nI've seen countless students who knew these techniques perfectly in practice but abandoned them under test pressure - don't let that be you. \nThe patterns are always there waiting to be discovered, and the few seconds you invest in finding them will save you minutes of error-prone arithmetic. Trust your strategic training.\n\n\n\n",
+        "article_id": "RD_000_TEST_IGNORE",
+        "article_name": "Neuron_TEST2509_IGNORE",
+        "article_section": "Data insights",
+        "doubts_record_id": ""
+      }
+    ],
+    "Basic LLM Chain": [
+      {
+        "output": {
+          "gmat_sub_section_identified": "Arithmetic",
+          "logical_gaps_identified": "[Gap 1 - The approximation (1-a)/(1+b) ≈ 1-b is used without explaining why it works or when it's valid] [Gap 2 - The method for counting prime factors in factorials (1+1+2=4 factors of 3 in 9!) isn't clearly explained] [Gap 3 - The 30-second pattern recognition scan lacks concrete guidance on what specific cues to look for] [Gap 4 - Strategic grouping in Amara's solution seems arbitrary - no clear rules for which approximations are acceptable] [Gap 5 - No clear way to distinguish problems that have elegant shortcuts vs those requiring actual computation]",
+          "gap_to_category_mapping": "**Genuine Doubts:** Gap 1, Gap 2, Gap 3 - These involve unclear explanations of technical methods and missing procedural steps that would genuinely confuse students about fundamental concepts. **Alternate Approach:** Gap 4, Gap 5 - These gaps involve decision-making processes where students could propose different strategies or frameworks for making similar choices.",
+          "doubt": [
+            {
+              "doubt_number": "1",
+              "doubt_category": "GENUINE",
+              "logical_gap_number": "1",
+              "student_level": "Medium",
+              "doubt_text": "I'm confused about this approximation thing - like how do we know when (1-a)/(1+b) ≈ 1-b actually works? The article says something about 'dominant terms' but doesn't explain what that means or how to spot them.",
+              "stucent_reasoning": "The student understands the basic concept of approximation but is confused about the validity conditions and technical terminology. The article uses this approximation method without providing the underlying mathematical justification or criteria for when it applies, leaving students uncertain about when they can safely use this technique."
+            },
+            {
+              "doubt_number": "2",
+              "doubt_category": "GENUINE",
+              "logical_gap_number": "2",
+              "student_level": "Low",
+              "doubt_text": "I don't get how you count the factors of 3 in 9! like this - why is it 1+1+2=4? Can someone explain this step by step because I'm totally lost with this counting method.",
+              "stucent_reasoning": "The student cannot follow the prime factor counting procedure in factorials. The article jumps directly to the counting result without explaining the systematic method for identifying and tallying prime factors within factorial expressions, leaving beginners unable to replicate the process."
+            },
+            {
+              "doubt_number": "3",
+              "doubt_category": "GENUINE",
+              "logical_gap_number": "3",
+              "student_level": "Medium",
+              "doubt_text": "The 30-second pattern scan sounds good but actually what am I supposed to look for? Like what specific things in the numbers or expressions should make me think 'oh this has a pattern' or whatever?",
+              "stucent_reasoning": "The student wants to apply the pattern recognition framework but lacks concrete visual or numerical cues to guide the process. The article provides the conceptual framework but doesn't give specific indicators that would help students quickly identify pattern opportunities in practice."
+            },
+            {
+              "doubt_number": "4",
+              "doubt_category": "ALTERNATE",
+              "logical_gap_number": "4",
+              "student_level": "High",
+              "doubt_text": "For Amara's problem, what if I group the primes differently - like 2×3×5=30 and then 7×11×13×17×19 separately? Would that work too or is there some specific reason to group them the way shown?",
+              "stucent_reasoning": "The student understands the strategic grouping concept but questions the specific pairing choices presented. They want to explore alternative grouping strategies and understand whether there are systematic rules for making these decisions or if multiple valid approaches exist."
+            },
+            {
+              "doubt_number": "5",
+              "doubt_category": "ALTERNATE",
+              "logical_gap_number": "5",
+              "student_level": "High",
+              "doubt_text": "How do I actually decide if a problem has an elegant shortcut or if I should just compute? Maybe I could create like a checklist - if I see certain types of numbers or operations, then look for shortcuts, otherwise just calculate na?",
+              "stucent_reasoning": "The student wants to develop a systematic decision framework for choosing between strategic and computational approaches. They recognize the need for a structured method to make this determination quickly and propose creating a systematic checklist rather than relying on intuition alone."
+            }
+          ]
+        }
+      }
+    ],
+    "No Operation, do nothing": [
+      {
+        "input_recordId": "recPa58jxPnCrqveQ",
+        "article_content_text": "Smart vs. Hard: SIMPLIFY Skills That Transform Impossible Into Manageable\nThe Arithmetic Nightmare That Haunts Every Student\nYou're facing a math problem loaded with intimidating numbers, and your mind immediately locks onto one approach: brute-force calculation. Your brain starts mapping out an arithmetic battle plan—multiply these massive numbers, compute exact values, slog through every single step of the computational nightmare ahead.\nBut as you dive into the calculations, something terrible happens. The numbers get unwieldy. The arithmetic becomes error prone. What started as a clear path forward dissolves into a mess of mistakes, crossed-out work, and growing panic as precious test time slips away.\nHere's what most students don't realize: that computational complexity isn't the real challenge—it's a distraction from the elegant mathematical insight waiting to be discovered.\nThat's the power of SIMPLIFY skills – the ability to see past surface complexity and recognize the elegant structure hiding underneath.\n\n \nWhen Students Hit the Computational Wall\nLet me introduce you to three students who learned this lesson the hard way.\nPriya and the Decimal Disaster\nThe Problem: $$\\frac{0.99999999}{1.0001}-\\frac{0.99999991}{1.0003}=$$\n(A) 10^(-8) (B) 3×10^(-8) (C) 3×10^(-4) (D) 2×10^(-4) (E) 10^(-4)\nPriya took one look at this monster and thought, \"Okay, I need to get these fractions to have common denominators, then subtract.\" She started calculating:\n\"Let me see... the common denominator would be 1.0001 × 1.0003... that's 1.00040003. Then I need to multiply 0.99999999 by 1.0003... that's...\"\nTen minutes later, Priya is drowning in decimals, making arithmetic errors, and getting nowhere.\n \nWhere Priya Hit the Wall: She tried to muscle through with pure computation instead of stepping back to see what these numbers actually represent.\nKenji and the Factorial Fiasco\nThe Problem: If n = 9! – 6^4, which of the following is the greatest integer k such that 3^k is a factor of n?\n(A) 1 (B) 3 (C) 4 (D) 6 (E) 8\nKenji's approach: \"First, let me calculate 9! That's 1 × 2 × 3 × 4 × 5 × 6 × 7 × 8 × 9... let me see... 362,880. And 6^4 = 1,296. So n = 362,880 - 1,296 = 361,584. Now I need to divide this by powers of 3 until it doesn't work...\"\nKenji spent 15 minutes on arithmetic, made several calculation errors, and still had no clear path to the answer.\nWhere Kenji Hit the Wall: He got buried in huge numbers instead of recognizing that this is really a problem about prime factorizations.\nAmara and the Prime Product Panic\nThe Problem: The product of all the prime numbers less than 20 is closest to which of the following powers of 10?\n(A) 10⁹ (B) 10⁸ (C) 10⁷ (D) 10⁶ (E) 10⁵\nAmara started listing: \"2, 3, 5, 7, 11, 13, 17, 19. Now let me multiply: 2 × 3 = 6, then 6 × 5 = 30, then 30 × 7 = 210, then 210 × 11 = 2,310...\"\nBy the time Amara got to multiplying by 17 and 19, she was dealing with numbers like 510,510 × 19, making errors left and right.\nWhere Amara Hit the Wall: She tried to compute the exact product instead of realizing this is an estimation problem that doesn't need precise arithmetic.\n \nThe SIMPLIFY Rescue: Seeing Structure, Not Just Numbers\nHere's where the magic happens. Instead of fighting the complexity, what if we SIMPLIFY by recognizing the underlying patterns?\nPriya's Rescue: The \"Close to 1\" Pattern\nLet's help Priya see what she missed. Look at those decimal numbers again:\n•\t0.99999999 = 1 - 0.00000001 = 1 - 10⁻⁸\n•\t0.99999991 = 1 - 0.00000009 = 1 - 9×10⁻⁸\n•\t1.0001 = 1 + 0.0001 = 1 + 10⁻⁴\n•\t1.0003 = 1 + 0.0003 = 1 + 3×10⁻⁴\nThe Key Insight: Both fractions have the form \"something very close to 1\" divided by \"something slightly bigger than 1.\"\nWhen you divide a number slightly less than 1 by a number slightly more than 1, you get approximately: 1 minus the denominator's extra amount.\nSo:\n•\tFirst fraction ≈ 1 - 10⁻⁴\n•\tSecond fraction ≈ 1 - 3×10⁻⁴\n•\tDifference = [1 - 10⁻⁴] - [1 - 3×10⁻⁴] = 2×10⁻⁴\nThe Magic: Instead of brutal decimal arithmetic, Priya could have solved this in three clean steps by recognizing the structural pattern.\nThis type of strategic approximation requires careful attention to the dominant terms—if you want to see exactly how to set up the approximation (1-a)/(1+b) ≈ 1-b and why the small numerator differences become negligible, the complete step-by-step solution demonstrates the algebraic reasoning that prevents these magnitude estimation errors.\nKenji's Rescue: The Factoring Strategy\nLet's show Kenji the elegant path. Instead of computing those massive numbers, recognize that both terms share a common structure:\nThe Key Insight: Both 9! and 6^4 contain powers of 3. Let's extract them:\n•\t9! contains 3, 6(=2×3), and 9(=3×3), giving us 1+1+2 = 4 factors of 3. So 9! = 3⁴ × m\n•\t6^4 = (2×3)^4 = 2⁴ × 3⁴\nNow our subtraction becomes: n = 9! - 6^4 = 3⁴ × m - 3⁴ × 16 = 3⁴(m - 16)\nInstead of working with 361,584, Kenji can work with the much simpler difference (m - 16), then check if this difference has additional factors of 3.\nThe Magic: By factoring first, Kenji transforms an intimidating arithmetic problem into a manageable factorization analysis.\nThe systematic factoring approach prevents the computational errors that trap most students—if you want to see exactly how to count the prime factors in factorials and handle the subtraction structure, the detailed walkthrough shows why extracting common powers of 3 first makes this problem manageable rather than overwhelming.\nAmara's Rescue: The Strategic Grouping Approach\nLet's rescue Amara from her multiplication nightmare. The key is recognizing this as an estimation problem, not an exact calculation problem.\nThe Key Insight: Group the primes strategically to create powers of 10:\n•\t2 × 5 = 10 (perfect!)\n•\t7 × 11 ≈ 77 ≈ 80 = 8 × 10\n•\t13 × 17 ≈ 221 ≈ 220 = 22 × 10\n•\t3 × 19 ≈ 57 ≈ 60 = 6 × 10\nProduct ≈ 10 × (8×10) × (22×10) × (6×10) = 10 × 8 × 22 × 6 × 10³ = 10,560 × 10³ ≈ 10⁷\nThe Magic: Instead of exact multiplication, Amara could estimate the order of magnitude in just a few strategic steps.\nThis strategic grouping technique requires knowing when approximations are acceptable and how to combine them effectively—if you want to see how to systematically group factors to create powers of 10 and why this estimation method works for order-of-magnitude problems, the complete solution reveals the pattern recognition that makes seemingly complex products manageable.\nThe Pattern Recognition Superpower\nNotice what all three rescues have in common? They all involve seeing the forest instead of the trees:\n1\\.\tPriya's problem: Recognize \"close to 1\" patterns instead of fighting decimals\n2\\.\tKenji's problem: Recognize shared prime factors instead of computing huge numbers\n3\\.\tAmara's problem: Recognize powers of 10 opportunities instead of exact multiplication\nThis is what SIMPLIFY skills really do – they help you spot the underlying mathematical structure that makes problems manageable.\n \nYour SIMPLIFY Toolkit: Questions to Ask Yourself\nWhen you encounter a computationally intimidating problem, pause and ask:\n \n\"What pattern am I missing?\"\n•\tAre numbers close to familiar values (like 1, 10, 100)?\n•\tDo expressions share common factors I can pull out?\n•\tCan I group terms strategically?\n\"What is this problem really about?\"\n•\tIs this asking for an exact answer or an approximation?\n•\tWhat mathematical concept is being tested underneath the arithmetic?\n\"How can I make this smaller?\"\n•\tCan I factor out common terms?\n•\tCan I use substitution to work with simpler expressions?\n•\tCan I estimate instead of calculating exactly?\nThe Transformation: From Computational Victim to Strategic Thinker\nHere's the beautiful truth: The problems that look the most computationally frightening are often the ones with the most elegant shortcuts. The complexity is usually a disguise, not the real challenge.\nWhen you develop strong SIMPLIFY skills, you stop being a victim of arithmetic and become a detective of mathematical structure. You start seeing patterns instead of just numbers. You start recognizing opportunities instead of just obstacles.\nThe next time a problem tries to bury you in calculations, take a breath and ask: \"What would the smart approach look like here?\"\n \nBecause there's always a smart approach. Always.\nAnd once you find it, you'll wonder why you ever thought math had to be so hard.\n\nComments:\nDoubt 1:\nDoubt 1: \nHow do I know when I'm spending too much time looking for a 'smart' approach versus just doing the calculation? I wasted 5 minutes on a practice problem trying to find some elegant shortcut that probably didn't exist.\nResponse 1: \nHere's the key insight that transforms this dilemma: give yourself a 30-second pattern recognition scan before diving into calculations. \nAsk those three SIMPLIFY questions quickly - \"What pattern am I missing? What is this really about? How can I make this smaller?\" \nIf nothing jumps out in that window, start calculating BUT stay alert for patterns that emerge during the process. Often, the \"smart\" approach reveals itself once you begin working with the numbers. The goal isn't to force elegance where none exists - it's to develop the radar that spots genuine opportunities. \nRemember, even Priya's decimal problem would have taken her down a computational rabbit hole if she hadn't stepped back to recognize those \"close to 1\" patterns. With practice, that 30-second scan becomes automatic and incredibly powerful.\nDoubt 2:\nDoubt 5:\n I'm worried about test day - what if I can't spot these patterns under pressure? Like, I've been in situations where my brain just freezes and I default to the computational approach even when I know there's probably a smarter way. Any tips for staying strategic when the clock is ticking?\nResponse 5: You've hit on every test-taker's biggest fear, and I completely understand that pressure-induced tunnel vision. Here's your test day protocol: Create a physical trigger. The moment you see intimidating numbers, take one deep breath and physically put your pen down for exactly 5 seconds while asking \"What would the smart approach look like here?\" \nThat forced pause breaks the panic-computation cycle. Next, develop pattern recognition shortcuts: \n1\\.\tif you see lots of 9s or 0s, think approximation. \n2\\.\tIf you see factorials with other terms, think common factors. \n3\\.\tIf you see products of many numbers, think strategic grouping. \nPractice these triggers until they become muscle memory. \nMost importantly, remember that computational mistakes under pressure will hurt you more than taking 30 seconds to find the elegant path. \nI've seen countless students who knew these techniques perfectly in practice but abandoned them under test pressure - don't let that be you. \nThe patterns are always there waiting to be discovered, and the few seconds you invest in finding them will save you minutes of error-prone arithmetic. Trust your strategic training.\n\n\n\n",
+        "article_id": "RD_000_TEST_IGNORE",
+        "article_name": "Neuron_TEST2509_IGNORE",
+        "article_section": "Data insights",
+        "doubts_record_id": ""
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b37509715b18abc5c914305991fb08b944e778bd2b6f7779ac022f6bac258788"
+  }
+}

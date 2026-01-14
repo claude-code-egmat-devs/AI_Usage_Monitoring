@@ -1,0 +1,668 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28d7d448-7f70-4ab3-ace0-3bb5890a300b",
+              "name": "body.reference_questions",
+              "value": "=Passage Text:\n\n{{ JSON.stringify($('Reddit_Article_Generator_RC').item.json.body.passage_text) }}\n\nQuestion Text:\n\n{{ JSON.stringify($('Reddit_Article_Generator_RC').item.json.body.question_text) }}\n\n\nQuestion Stats:\n\n{{ JSON.stringify($('Reddit_Article_Generator_RC').item.json.body.question_stats) }}\n\nDetailed Solution:\n\n{{ JSON.stringify($('Reddit_Article_Generator_RC').item.json.body.detailed_solution) }}\n\nPopular Incorrect Choice marked by the students:\n\n{{ JSON.stringify($('Reddit_Article_Generator_RC').item.json.body.popular_incorrect_choice) }}",
+              "type": "string"
+            },
+            {
+              "id": "eecd8823-16c9-4d3b-985c-7813efb2dbe6",
+              "name": "prompt",
+              "value": "=GMAT RC Article Creation Framework \n\nGoal \n\nCreate an article that a Harvard educator would be proud of that explains to GMAT Test takers, why they make a mistake in GMAT RC, and give them a framework to approach to avoid making these mistakes. \n\nImportant: Make sure that the article is generic. It should talk about general mistakes/principles and not be specific to just that passage. \n\nOpening Requirements \n\nStart with a generic hook about the universal principle or challenge being discussed. Do NOT reference the specific passage, question, or any passage-specific content in the opening paragraphs. The opening should apply to all similar GMAT RC situations and establish the conceptual framework before any examples. \n\nVARY THE OPENING – DO NOT USE THE SAME STANDARD OPENING FOR EACH ARTICLE. \n\n \n\nProcess Overview \n\nStep 1: Do a Diagnosis \n\nYou will receive the following inputs: \n\n    A hard RC passage \n\n    A Hard question on that passage \n\n    The stats of the question \n\n    The solution (detailed) \n\n    The most popular incorrect choice \n\nYour Process (do not publish): \n\n    Identify why people make the mistake, that is why do they choose the incorrect choice. You will evaluate one of more of the following:  \n\n    Where does their thought process go wrong? \n\n    Do they make a conceptual error, such as presuming that the author is making a claim or backing a piece of information when the author is merely presenting information, or misinterpreting the role of the evidence that the author presents, etc. \n\n    Avoid doing things critical to RC passage, such as visualization, connecting pieces of information despite the presence of markers, or not drawing combination inferences, etc. \n\nYour goal is to identify a primary reason as to why people chose the incorrect choice and rejected the correct choice. Iterate and Dwell upon if needed here. \n\nStep 2: Strategize How to Teach This Aspect \n\nOnce you have narrowed down, strategize how to make the reader realize his mistake. \n\n    Explain the core principle using a simple example - keep this generic \n\n    Explain how this is tested in a generic sense (remember, the student has not read the reference passage) \n\n    Give example (use the provided passage as reference - remember - they do not have it yet). Elaborate on the %age of people who make this mistake. This example needs to be a simple 2-3 line passage, to corroborate the issue being discussed in the article. \n\nGood Example: \"Many companies have implemented open office designs, which feature shared workspaces and minimal barriers between employees. However, recent productivity studies show these designs actually decrease employee focus by 15%. This challenges the assumption that open offices improve collaboration.\" \n\nStep 3: Create a Framework to Enable the Student to Avoid Making This Mistake \n\n    Create the framework \n\n    Explain the framework using a simple example \n\nStep 4: Create Two Exercises \n\n    Simple Example (two-line passage) \n\n    Complex Example (4-line passage) \n\nStep 5: Evaluate the Article You Generated \n\n    Revise every aspect of it. Make sure that the article is generic. It should talk about general mistakes/principles and not be specific to just that passage \n\n    Ensure your framework and principles can be applied to other similar RC passages, not just this specific one \n\n    If you enhance the output of one step, then check its potential impact on next step \n\n    Rate this article for clarity. How would a Harvard educator rate this. \n\nStep 6: Final Evaluation \n\nGo back and evaluate the article if it is following all the best practices: \n\n    Opening - needs to be generic and attractive to make the reader want to read the article, but relevant to the problem discussed at hand. \n\n    The example used needs to be simple and should help explain the problem at hand. \n\n    The framework explained needs to be pertinent to the problem at hand, and relevant and applicable to the strategy to overcome the problem. \n\n    The practice examples need to be relevant and applicable to the concept being taught. \n\nExample of good example: \n\nA Simple Example \n\nImagine reading this brief passage: \n\n\"Many companies have implemented open office designs, which feature shared workspaces and minimal barriers between employees. However, recent productivity studies show these designs actually decrease employee focus by 15%. This challenges the assumption that open offices improve collaboration.\" \n\nWhy is this good - it can help students visualize the problem at hand, and is relevant to the concept being described in the article. \n\nIf the best practices are not met, make the changes and present the final article. \n\n ",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        -144
+      ],
+      "id": "a188f0c6-4119-4eba-8ae9-dac8504defc1",
+      "name": "inputs"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert GMAT educator tasked with creating high-quality articles that help students avoid common Reading Comprehension mistakes. You will analyze the provided reference questions and create an educational article following a specific framework.\n\nReference Questions to Analyze:\n{{$('inputs').item.json.body.reference_questions}}\n\nInstructions\n{{$('inputs').item.json.prompt}}\n\n\nOUTPUT FORMAT:\nReturn a JSON object with exactly these two attributes:\n\n{\n  \"analysis_and_approach\": \"Detailed analysis of why students make this mistake, the teaching strategy, and framework rationale. Include the primary error identified and pedagogical approach chosen.\",\n  \"generated_article\": \"Complete article text following the framework structure, with clear sections, examples, and actionable guidance for students.\"\n}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        -144
+      ],
+      "id": "0a1d3879-ea5e-4c9b-8511-26b3a937c0f6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {
+          "maxTokensToSample": 18000,
+          "thinking": true,
+          "thinkingBudget": 7000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        80
+      ],
+      "id": "89f6f0c8-1b81-422d-9fbf-a743b47d673b",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "VyW2FNpKrdqxpkCy",
+          "name": "Anthropic OQ Connect"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"analysis_and_approach\": \"Detailed analysis of why students make this mistake, the teaching strategy, and framework rationale. Include the primary error identified and pedagogical approach chosen.\",\n  \"generated_article\": \"Complete article text following the framework structure, with clear sections, examples, and actionable guidance for students.\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        64
+      ],
+      "id": "590fb7a7-11f9-4da8-b6f0-cdaf2a88d7c1",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 25000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        528,
+        272
+      ],
+      "id": "bab6df65-d2c5-4c1c-8acf-f41e4094f782",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FhEfp5o6KwTR70QY",
+          "name": "SK OpenRouter Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a8233f7-a443-474e-bd6c-1d3a85571463",
+              "name": "article",
+              "value": "={{ $('AI Agent').item.json.output.generated_article }}",
+              "type": "string"
+            },
+            {
+              "id": "d43ee099-5145-4594-8aaa-31c37ed5fff0",
+              "name": "article_validation_prompt_1",
+              "value": "=Role - You are a Harvard educator who is going to validate this article to make it publication ready. \n\nYou will be given an article that you need to go through to validate for how reasonable the claims and examples given in the article are. \n\nInput: Article \n\nImportant Context Notes: \n\n• Test accuracy statistics (e.g., \"46% of students make this mistake\") come from actual test analytics and do not require external sourcing \n\n• Passage examples may contain constructed scenarios, fictional research, or hypothetical data points - these are teaching tools and should be evaluated for pedagogical effectiveness, not factual accuracy \n\n• Focus validation on the educational methodology, reasoning frameworks, and instructional claims made by the author \n\nThis is approach that you will follow: \n\nStep 1: \n\n• Go through the entire article in detail \n\n• Identify and categorize:  \n\n○ Educational Claims: Author's assertions about methodology, learning frameworks, or instructional approaches, logical structure of the article \n\n○ Test Analytics: Statistics about question accuracy, student performance, etc. \n\n○ Teaching Examples: Constructed passages, scenarios, or examples used for illustration \n\n○ Passage Content: Claims made within example passages (these are teaching tools, not factual assertions) \n\nStep 2: \n\n• Evaluate Educational Claims only:  \n\n○ Look at the justification behind each claim \n\n○ Rate how well-reasoned it is (1-10 scale: 9=extremely well-reasoned, 7=reasonably well-reasoned, 5=serious flaws) \n\n○ Consider pedagogical soundness and logical consistency \n\nStep 3: \n\n• Identify educational claims rated 5 or lower \n\n• Suggest improvements to increase rating to 7 or higher \n\nStep 4: \n\n• Evaluate Teaching Examples:  \n\n○ Assess clarity and pedagogical effectiveness \n\n○ Rate examples: 9=excellent teaching tool with clear demonstration and only one correct answer, 7=good but some potential confusion, 5=confusing or ineffective for learning \n\n○ Focus on whether examples successfully illustrate the intended concept \n\n \n\nStep 5: \n\n• Identify examples rated 5 or lower \n\n• Suggest improvements for better pedagogical effectiveness \n\nStep 6: \n\n• Create a summary table showing educational claims, teaching examples, ratings, and suggested corrections \n\n• Provide overall article rating (0-10) based on educational value and instructional soundness \n\nNote: Do not penalize for unsourced data within teaching examples or test accuracy statistics \n\nStep 7: \n\nIf the article rating is below 80/100, make corrections and share the revised article, as output, preserving the article structure and formatting. \n\n ",
+              "type": "string"
+            },
+            {
+              "id": "8c2b10ec-ce04-48a5-b610-7ed2749ce26a",
+              "name": "retry_count",
+              "value": 0,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        -144
+      ],
+      "id": "9433f278-3062-48c7-8f80-6864c3ebc2a1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Harvard educator validating this GMAT RC article for publication readiness. You will receive:\n1. The original reference questions that inspired the article\n2. The generated article to validate\n3. Validation guidelines\n\nREFERENCE QUESTIONS:\n{{$('inputs').item.json.body.reference_questions}}\n\nARTICLE TO VALIDATE:\n{{$('Edit Fields').item.json.article}}\n\nVALIDATION APPROACH:\n{{$('Edit Fields').item.json.article_validation_prompt_1}}\n\nYOUR TASK:\nFollow the 7-step validation process outlined in the validation approach. After completing your analysis:\n\n1. If the article rates 80/100 or higher: Return it as-is with minor improvements noted\n2. If the article rates below 80/100: Make necessary corrections and return the revised version\n\nFocus on:\n- Educational methodology soundness\n- Logical consistency of frameworks\n- Clarity and effectiveness of teaching examples\n- Pedagogical value and practical applicability\n- Generic applicability (not passage-specific)\n\nOUTPUT FORMAT:\nReturn a JSON object with exactly these five attributes:\n\n{\n  \"article_title\": \"Extract the title from the article (the main heading after any # symbols)\",\n  \"revised_article\": \"The complete article after applying all necessary corrections and improvements, maintaining original structure and formatting\",\n  \"key_improvements_made\": \"Detailed explanation of what specific changes were made and why, including ratings before/after for major elements\",\n  \"final_rating\": \"85\",\n  \"final_rating_justification\": \"Brief explanation of why this specific rating was assigned based on educational value, clarity, and instructional soundness\"\n}\n\nCRITICAL REQUIREMENTS:\n- Extract the article title from the main heading in the article text\n- Preserve the article's structure and formatting in revised_article\n- Be specific about improvements in key_improvements_made\n- Provide only the numerical rating (0-100) in final_rating field\n- Provide clear justification for the rating in the separate justification field\n- Ensure the revised article meets Harvard-level educational standards\n- Focus on pedagogical effectiveness over factual verification of teaching examples",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1280,
+        -144
+      ],
+      "id": "2e13b37b-459d-4267-bab1-20847d54ef07",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {
+          "maxTokensToSample": 18000,
+          "thinking": true,
+          "thinkingBudget": 8000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1184,
+        64
+      ],
+      "id": "b0c76a8b-cc4f-4074-aec0-b078c7ae9877",
+      "name": "Anthropic Chat Model2",
+      "credentials": {
+        "anthropicApi": {
+          "id": "VyW2FNpKrdqxpkCy",
+          "name": "Anthropic OQ Connect"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"article_title\": \"Extract the title from the article (the main heading after any # symbols)\",\n  \"revised_article\": \"The complete article after applying all necessary corrections and improvements, maintaining original structure and formatting\",\n  \"key_improvements_made\": \"Detailed explanation of what specific changes were made and why, including ratings before/after for major elements\",\n  \"final_rating\": \"85\",\n  \"final_rating_justification\": \"Brief explanation of why this specific rating was assigned based on educational value, clarity, and instructional soundness\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1456,
+        64
+      ],
+      "id": "c9084640-07d1-4ae8-a64d-a75bdf120646",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 25000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        272
+      ],
+      "id": "f21e3516-70b4-48cb-99cb-923d12fa139e",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FhEfp5o6KwTR70QY",
+          "name": "SK OpenRouter Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllyjGKHOQixiDWu",
+          "mode": "list",
+          "cachedResultName": "Input",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbllyjGKHOQixiDWu"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "article_id": "={{ $('Reddit_Article_Generator_RC').item.json.body.article_id }}",
+            "article_name": "={{ $('AI Agent1').item.json.output.article_title }}",
+            "article_section": "={{ $('Reddit_Article_Generator_RC').item.json.body.section }}",
+            "article_content_text": "={{ $('AI Agent1').item.json.output.revised_article }}",
+            "status_auto": "Not Started",
+            "article_rating": "={{ $('AI Agent1').item.json.output.final_rating }}",
+            "article_rating_justification": "={{ $('AI Agent1').item.json.output.final_rating_justification }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "article_id",
+              "displayName": "article_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_section",
+              "displayName": "article_section",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Quant",
+                  "value": "Quant"
+                },
+                {
+                  "name": "CR",
+                  "value": "CR"
+                },
+                {
+                  "name": "RC",
+                  "value": "RC"
+                },
+                {
+                  "name": "Data Insights",
+                  "value": "Data Insights"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_content_text",
+              "displayName": "article_content_text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "file_location",
+              "displayName": "file_location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Not Started",
+                  "value": "Not Started"
+                },
+                {
+                  "name": "Complete",
+                  "value": "Complete"
+                },
+                {
+                  "name": "In Process",
+                  "value": "In Process"
+                },
+                {
+                  "name": "Queue",
+                  "value": "Queue"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "questions_used",
+              "displayName": "questions_used",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "process_skills_targeted",
+              "displayName": "process_skills_targeted",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Mathematical_domains",
+              "displayName": "Mathematical_domains",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_rating",
+              "displayName": "article_rating",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_rating_justification",
+              "displayName": "article_rating_justification",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status_auto",
+              "displayName": "status_auto",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Not Started",
+                  "value": "Not Started"
+                },
+                {
+                  "name": "Complete",
+                  "value": "Complete"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "create_images",
+              "displayName": "create_images",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "rowSequence'",
+              "displayName": "rowSequence'",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "recordId_input",
+              "displayName": "recordId_input",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Doubts and Responses",
+              "displayName": "Doubts and Responses",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1792,
+        -144
+      ],
+      "id": "420dcf0a-b6c0-4d2d-ac19-e21c89b3a45d",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -448,
+        -144
+      ],
+      "id": "bb2a706f-1f84-4d28-b032-ca009d56d85b",
+      "name": "Reddit_Article_Generator_RC"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -144
+      ],
+      "id": "3368828f-a5cd-42d2-8dea-916a739cea3b",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "inputs": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        []
+      ]
+    },
+    "Reddit_Article_Generator_RC": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing": {
+      "main": [
+        [
+          {
+            "node": "inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "b37509715b18abc5c914305991fb08b944e778bd2b6f7779ac022f6bac258788"
+  }
+}

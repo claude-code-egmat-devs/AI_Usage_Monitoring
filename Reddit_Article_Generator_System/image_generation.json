@@ -1,0 +1,1951 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/generations",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-image-1.5\",\n  \"prompt\": {{ JSON.stringify($json.image_spec) }},\n  \"n\": 1,\n  \"quality\": \"high\",\n  \"background\": \"opaque\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -544,
+        384
+      ],
+      "id": "9265badc-55ab-4257-8780-157fd3fdef61",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "kk8aePAtHTqLegML",
+          "name": "OpenAi Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "667ad8d3-37ad-42a3-a5b6-27e65878ea0c",
+              "name": "=article_text",
+              "value": "={{ $json.article_content_text }}",
+              "type": "string"
+            },
+            {
+              "id": "dca8cc24-7d2f-40d5-b5be-03f67341324f",
+              "name": "article_name",
+              "value": "={{ $json.article_name }}",
+              "type": "string"
+            },
+            {
+              "id": "f29e31ef-f328-4265-aed9-7c49379f934e",
+              "name": "article_id",
+              "value": "={{ $json.article_id }}",
+              "type": "string"
+            },
+            {
+              "id": "bdc43be0-5db4-4ff5-b3c6-40ed77c1ecb8",
+              "name": "record_id_input",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2656,
+        368
+      ],
+      "id": "3f0d0488-caaa-44f1-8d5b-06fc5235124c",
+      "name": "Input"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert content strategist and visual design director specializing in educational content. Your task is to analyze educational articles and create comprehensive, production-ready image implementation plans that follow a specific design language. \n\nHere is the educational article you need to analyze - given below. \n\n<article>\n{{ $('Input').item.json.article_text }}\n</article>\nYour goal is to provide a complete image strategy with specifications detailed enough that a designer could create each image without any additional clarification, while following the design language principles and specifications provided. \n\n## Design Language Requirements \n\nYour image specifications must incorporate this design language throughout: \n\n**Design Principles:** \n\n1. Clarity First - Every element serves a clear purpose \n\n2. Progressive Disclosure - Information layered logically  \n\n3. Data-Driven Confidence - Clear, accurate data visualization \n\n4. Adaptive Personalization - Tailored feel with consistent patterns \n\n**Color System:** \n\n- Primary Blue: #4A90E2 (main elements, CTAs, highlights) \n\n- Secondary Blue: #2E5BBA (hover states, active elements) \n\n- Success Green: #5CB85C (completed tasks, positive indicators) \n\n- Warning Orange: #F39C12 (attention items, moderate alerts) \n\n- Error Red: #E74C3C (error states, critical alerts) \n\n- Info Purple: #9B59B6 (information highlights, feature callouts) \n\n- Progress Teal: #1ABC9C (active progress, current states) \n\n- Text Primary: #2C3E50, Text Secondary: #7F8C8D, Text Disabled: #BDC3C7 \n\n- Background Primary: #FFFFFF, Background Secondary: #F8F9FA, Background Tertiary: #E9ECEF \n\n- Border Light: #DEE2E6, Border Medium: #CED4DA, Border Dark: #ADB5BD \n\n**Typography:** \n\n- Font Family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif \n\n- Heading scales: H1(28px/36px), H2(24px/32px), H3(20px/28px), H4(18px/26px) \n\n- Body: Large(18px/28px), Medium(16px/24px), Small(14px/20px) \n\n- Caption: 12px/16px, Overline: 11px/16px with 0.5px letter spacing \n\n**Spacing System:** Base unit 8px \n\n- Small: 8px, Medium: 16px, Large: 24px, XLarge: 32px, XXLarge: 48px \n\n## Task Instructions \n\nFirst, conduct a thorough content analysis in <content_analysis> tags. In your analysis: \n\n1. **Quote Key Educational Concepts**: Extract and quote key sentences from the article containing main educational concepts, processes, or learning objectives. It's OK for this section to be quite long. \n\n2. **Identify Complexity Factors**: For each quoted concept, explicitly note what makes it complex, abstract, or potentially difficult for learners to understand. \n\n3. **Section-by-Section Visual Opportunities**: Go through the article systematically, section by section, noting specific opportunities where visual aids would enhance comprehension. Quote the relevant text and explain why it needs visual support. \n\n4. **Concept Prioritization**: List all identified concepts and rank them by both educational impact and complexity to establish clear priorities for image creation. \n\n5. **Visual Type Mapping**: For each high-priority concept, determine what types of images would best serve the educational purpose (diagrams, infographics, illustrations, etc.) and explain your reasoning. \n\n6. **Design Language Application**: Consider how the design language principles (Clarity First, Progressive Disclosure, Data-Driven Confidence, Adaptive Personalization) can be applied to make each concept clearer through visual design. \n\nAfter your analysis, provide a comprehensive image implementation plan following this four-phase structure: \n\n**PHASE 1: CONTENT ANALYSIS & CONCEPT IDENTIFICATION** \n\nIdentify key learning objectives, complex processes, common misconceptions, data/statistics, comparisons, step-by-step procedures, action items, and lists of related concepts. \n\n**PHASE 2: IMAGE STRATEGY & PLACEMENT PLANNING** \n\nFor each concept, determine optimal placement location, strategic purpose, priority level (Critical/High/Medium/Low), and how the image supports surrounding text. \n\n**PHASE 3: VISUAL CONTENT MAPPING** \n\nMap content to visual formats: \n\n- Process Diagrams: Step-by-step procedures, workflows, decision trees \n\n- Comparison Charts: Before/after, right/wrong, multiple approaches \n\n- Infographics: Data, statistics, key facts, summaries \n\n- Conceptual Illustrations: Abstract ideas, mental models, frameworks \n\n- Annotated Examples: Worked problems, case studies, applications \n\n- Visual Metaphors: Difficult concepts benefiting from analogies \n\n**PHASE 4: DETAILED IMAGE SPECIFICATIONS** \n\nFor each image, provide complete specifications using this format: \n\n``` \n\n===================================== \n\nIMAGE #[Number]: [Descriptive Name] \n\n===================================== \n\nPLACEMENT: [Exact location - \"After paragraph starting with...\" or \"Between sections X and Y\"] \n\nPURPOSE: [What educational goal this image serves] \n\nPRIORITY: [Critical/High/Medium/Low] \n\nDETAILED SPECIFICATIONS: \n\n------------------------ \n\nType: [Infographic/Diagram/Chart/Illustration/etc.] \n\nDimensions: [Specific pixel dimensions or aspect ratio] \n\nFormat: [PNG/SVG/GIF - static or animated] \n\nVISUAL CONTENT: \n\n- Primary Elements: [List all major visual components] \n\n- Text Content - Follow the EXACT words \n\n* Headline: \"[Exact wording]\" - Use EXACT words \n\n* Labels: [List all labels needed] - Use EXACT words \n\n* Callouts: \"[Any explanatory text]\" - Use EXACT words \n\n* Caption: \"[Suggested caption text]\" - Use EXACT words \n\nLAYOUT STRUCTURE: \n\n[Describe layout with spacing using 8px base unit system] \n\nCOLOR SPECIFICATIONS - Use EXACT recommendations.  \n\n[Use the design language color system - specify hex codes from the palette above] \n\n- Primary Elements: [Choose from Primary/Secondary Blue] \n\n- Functional Colors: [Success Green/Warning Orange/Error Red/Info Purple/Progress Teal as appropriate] \n\n- Text: [Text Primary/Secondary/Disabled as appropriate] \n\n- Background: [Background Primary/Secondary/Tertiary as appropriate] \n\n- Borders: [Border Light/Medium/Dark as appropriate] \n\nTYPOGRAPHY: \n\n[Use the Inter font family and specified scales] \n\n- Headers: [Specify from H1-H4 scale above] \n\n- Body text: [Specify from Body Large/Medium/Small] \n\n- Labels: [Specify size and weight from typography scale] \n\nDATA/CONTENT DETAILS: \n\n[For charts: exact data points, axis labels, scales] \n\n[For processes: each step with exact text] \n\n[For comparisons: specific items being compared] \n\nACCESSIBILITY: \n\n- Alt text: \"[Complete descriptive text for screen readers]\" \n\n- Color contrast: [Ensure WCAG 2.1 AA compliance - 4.5:1 for normal text, 3:1 for large text] \n\n**DESIGNER HANDOFF PACKAGE** \n\nConclude with: \n\n1. **Quick Reference Sheet**: List of all images with priorities and types \n\n2. **Style Guide**: Consistent application of the design language across all images \n\n3. **Quality Checklist**: Criteria for evaluating each completed image against design principles \n\n4. **Placement**: Where will each image be placed?  \n\n5. **Orientation**: Landscape/ Potrait/ Square \n\n\n# Output Format\n\nYour final output should follow the below JSON Structure for each image are sent as a list of json objects as per the provided structure for each image, and then the final conclusion describing the overall requirement summary\n\n{\n\n\"article_images\":\n[\n{\n  \"image_number\": \"integer\",\n  \"descriptive_name\": \"string\",\n  \"placement\": \"string - Exact location - After paragraph starting with... or Between sections X and Y\",\n  \"purpose\": \"string - What educational goal this image serves\",\n  \"priority\": \"string - Critical/High/Medium/Low\",\n  \"detailed_specifications\": {\n    \"type\": \"string - Infographic/Diagram/Chart/Illustration/etc\",\n    \"dimensions\": \"string - Specific pixel dimensions or aspect ratio\",\n    \"format\": \"string - PNG/SVG/GIF - static or animated\",\n    \"visual_content\": {\n      \"primary_elements\": [\"string - List all major visual components\"],\n      \"text_content\": {\n        \"headline\": \"string - Exact wording - Use EXACT words\",\n        \"labels\": [\"string - List all labels needed - Use EXACT words\"],\n        \"callouts\": [\"string - Any explanatory text - Use EXACT words\"],\n        \"caption\": \"string - Suggested caption text - Use EXACT words\"\n      }\n    },\n    \"layout_structure\": \"string - Describe layout with spacing using 8px base unit system\",\n    \"color_specifications\": {\n      \"primary_elements\": \"string - Choose from Primary/Secondary Blue with hex codes\",\n      \"functional_colors\": \"string - Success Green/Warning Orange/Error Red/Info Purple/Progress Teal with hex codes\",\n      \"text_colors\": \"string - Text Primary/Secondary/Disabled with hex codes\", \n      \"background_colors\": \"string - Background Primary/Secondary/Tertiary with hex codes\",\n      \"border_colors\": \"string - Border Light/Medium/Dark with hex codes\"\n    },\n    \"typography\": {\n      \"font_family\": \"string - Inter font family specification\",\n      \"headers\": \"string - Specify from H1-H4 scale with px/line-height\",\n      \"body_text\": \"string - Specify from Body Large/Medium/Small with px/line-height\",\n      \"labels\": \"string - Specify size and weight from typography scale\"\n    },\n    \"data_content_details\": {\n      \"chart_data\": \"object - exact data points, axis labels, scales if applicable\",\n      \"process_steps\": [\"string - each step with exact text if applicable\"],\n      \"comparison_items\": [\"string - specific items being compared if applicable\"]\n    },\n    \"accessibility\": {\n      \"alt_text\": \"string - Complete descriptive text for screen readers\",\n      \"color_contrast\": \"string - Ensure WCAG 2.1 AA compliance - 4.5:1 for normal text, 3:1 for large text\"\n    }\n  }\n}],\n\n\"designer_handoff_package\": {\n    \"quick_reference_sheet\": [\n      {\n        \"image_number\": \"integer\",\n        \"descriptive_name\": \"string\",\n        \"priority\": \"string - Critical/High/Medium/Low\",\n        \"type\": \"string - Infographic/Diagram/Chart/Illustration/etc\"\n      }\n    ],\n    \"style_guide\": {\n      \"design_language_consistency\": \"string - How to consistently apply design language across all images\",\n      \"color_usage_guidelines\": {\n        \"primary_colors\": \"string - When and how to use Primary Blue #4A90E2 and Secondary Blue #2E5BBA\",\n        \"functional_colors\": \"string - When to use Success Green, Warning Orange, Error Red, Info Purple, Progress Teal\",\n        \"text_colors\": \"string - Application of Text Primary #2C3E50, Secondary #7F8C8D, Disabled #BDC3C7\",\n        \"background_colors\": \"string - Use of Background Primary #FFFFFF, Secondary #F8F9FA, Tertiary #E9ECEF\",\n        \"border_colors\": \"string - Application of Border Light #DEE2E6, Medium #CED4DA, Dark #ADB5BD\"\n      },\n      \"typography_guidelines\": {\n        \"font_consistency\": \"string - Inter font family usage across all images\",\n        \"heading_hierarchy\": \"string - When to use H1(28px/36px), H2(24px/32px), H3(20px/28px), H4(18px/26px)\",\n        \"body_text_usage\": \"string - Application of Body Large(18px/28px), Medium(16px/24px), Small(14px/20px)\",\n        \"supporting_text\": \"string - Use of Caption(12px/16px) and Overline(11px/16px with 0.5px letter spacing)\"\n      },\n      \"spacing_consistency\": \"string - Consistent 8px base unit application: Small(8px), Medium(16px), Large(24px), XLarge(32px), XXLarge(48px)\",\n      \"design_principles_application\": {\n        \"clarity_first\": \"string - How every element serves a clear purpose\",\n        \"progressive_disclosure\": \"string - How information is layered logically\",\n        \"data_driven_confidence\": \"string - Clear, accurate data visualization standards\",\n        \"adaptive_personalization\": \"string - Tailored feel with consistent patterns\"\n      }\n    },\n    \"quality_checklist\": [\n      \"string - Clarity First: Does every visual element serve a clear educational purpose?\",\n      \"string - Progressive Disclosure: Is information presented in logical, digestible layers?\",\n      \"string - Data-Driven Confidence: Are data visualizations clear, accurate, and trustworthy?\",\n      \"string - Adaptive Personalization: Does the design feel tailored while maintaining consistency?\",\n      \"string - Color Compliance: Are all colors from the approved design language palette?\",\n      \"string - Typography Consistency: Is Inter font family used with correct scales throughout?\",\n      \"string - Spacing Accuracy: Is the 8px base unit system applied correctly?\",\n      \"string - Accessibility Standards: Does the image meet WCAG 2.1 AA compliance (4.5:1 contrast for normal text, 3:1 for large text)?\",\n      \"string - Educational Effectiveness: Does the image clearly support the identified learning objective?\",\n      \"string - Production Readiness: Are dimensions, format, and technical specifications correct?\"\n    ],\n    \"placement\": [\n      {\n        \"image_number\": \"integer\",\n        \"placement_location\": \"string - Exact location description (After paragraph starting with... or Between sections X and Y)\",\n        \"context_relationship\": \"string - How the image relates to surrounding content\",\n        \"strategic_positioning\": \"string - Why this placement supports the educational goal\"\n      }\n    ],\n    \"orientation\": [\n      {\n        \"image_number\": \"integer\",\n        \"orientation_type\": \"string - Landscape/Portrait/Square\",\n        \"rationale\": \"string - Why this orientation best serves the content and placement\",\n        \"dimensions_recommendation\": \"string - Specific pixel dimensions or aspect ratio\"\n      }\n    ]\n  }\n\n\n\n}\n\nRemember: Every specification must be complete enough that a designer could execute it without asking clarifying questions. Include exact text, specific colors from the provided palette, precise layouts using the spacing system, and clear production requirements for each image. \n\n ",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -2192,
+        368
+      ],
+      "id": "60bd5935-2a36-46da-a640-0f5dacfabd45",
+      "name": "Image_Req_Generation"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {
+          "maxTokensToSample": 20000,
+          "thinking": true,
+          "thinkingBudget": 8000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -2256,
+        576
+      ],
+      "id": "8f450587-1880-40a2-9bca-4765dfc5377e",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "VyW2FNpKrdqxpkCy",
+          "name": "Anthropic OQ Connect"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\n\"article_images\":\n[\n{\n  \"image_number\": \"integer\",\n  \"descriptive_name\": \"string\",\n  \"placement\": \"string - Exact location - After paragraph starting with... or Between sections X and Y\",\n  \"purpose\": \"string - What educational goal this image serves\",\n  \"priority\": \"string - Critical/High/Medium/Low\",\n  \"detailed_specifications\": {\n    \"type\": \"string - Infographic/Diagram/Chart/Illustration/etc\",\n    \"dimensions\": \"string - Specific pixel dimensions or aspect ratio\",\n    \"format\": \"string - PNG/SVG/GIF - static or animated\",\n    \"visual_content\": {\n      \"primary_elements\": [\"string - List all major visual components\"],\n      \"text_content\": {\n        \"headline\": \"string - Exact wording - Use EXACT words\",\n        \"labels\": [\"string - List all labels needed - Use EXACT words\"],\n        \"callouts\": [\"string - Any explanatory text - Use EXACT words\"],\n        \"caption\": \"string - Suggested caption text - Use EXACT words\"\n      }\n    },\n    \"layout_structure\": \"string - Describe layout with spacing using 8px base unit system\",\n    \"color_specifications\": {\n      \"primary_elements\": \"string - Choose from Primary/Secondary Blue with hex codes\",\n      \"functional_colors\": \"string - Success Green/Warning Orange/Error Red/Info Purple/Progress Teal with hex codes\",\n      \"text_colors\": \"string - Text Primary/Secondary/Disabled with hex codes\", \n      \"background_colors\": \"string - Background Primary/Secondary/Tertiary with hex codes\",\n      \"border_colors\": \"string - Border Light/Medium/Dark with hex codes\"\n    },\n    \"typography\": {\n      \"font_family\": \"string - Inter font family specification\",\n      \"headers\": \"string - Specify from H1-H4 scale with px/line-height\",\n      \"body_text\": \"string - Specify from Body Large/Medium/Small with px/line-height\",\n      \"labels\": \"string - Specify size and weight from typography scale\"\n    },\n    \"data_content_details\": {\n      \"chart_data\": \"object - exact data points, axis labels, scales if applicable\",\n      \"process_steps\": [\"string - each step with exact text if applicable\"],\n      \"comparison_items\": [\"string - specific items being compared if applicable\"]\n    },\n    \"accessibility\": {\n      \"alt_text\": \"string - Complete descriptive text for screen readers\",\n      \"color_contrast\": \"string - Ensure WCAG 2.1 AA compliance - 4.5:1 for normal text, 3:1 for large text\"\n    }\n  }\n}],\n\n\"designer_handoff_package\": {\n    \"quick_reference_sheet\": [\n      {\n        \"image_number\": \"integer\",\n        \"descriptive_name\": \"string\",\n        \"priority\": \"string - Critical/High/Medium/Low\",\n        \"type\": \"string - Infographic/Diagram/Chart/Illustration/etc\"\n      }\n    ],\n    \"style_guide\": {\n      \"design_language_consistency\": \"string - How to consistently apply design language across all images\",\n      \"color_usage_guidelines\": {\n        \"primary_colors\": \"string - When and how to use Primary Blue #4A90E2 and Secondary Blue #2E5BBA\",\n        \"functional_colors\": \"string - When to use Success Green, Warning Orange, Error Red, Info Purple, Progress Teal\",\n        \"text_colors\": \"string - Application of Text Primary #2C3E50, Secondary #7F8C8D, Disabled #BDC3C7\",\n        \"background_colors\": \"string - Use of Background Primary #FFFFFF, Secondary #F8F9FA, Tertiary #E9ECEF\",\n        \"border_colors\": \"string - Application of Border Light #DEE2E6, Medium #CED4DA, Dark #ADB5BD\"\n      },\n      \"typography_guidelines\": {\n        \"font_consistency\": \"string - Inter font family usage across all images\",\n        \"heading_hierarchy\": \"string - When to use H1(28px/36px), H2(24px/32px), H3(20px/28px), H4(18px/26px)\",\n        \"body_text_usage\": \"string - Application of Body Large(18px/28px), Medium(16px/24px), Small(14px/20px)\",\n        \"supporting_text\": \"string - Use of Caption(12px/16px) and Overline(11px/16px with 0.5px letter spacing)\"\n      },\n      \"spacing_consistency\": \"string - Consistent 8px base unit application: Small(8px), Medium(16px), Large(24px), XLarge(32px), XXLarge(48px)\",\n      \"design_principles_application\": {\n        \"clarity_first\": \"string - How every element serves a clear purpose\",\n        \"progressive_disclosure\": \"string - How information is layered logically\",\n        \"data_driven_confidence\": \"string - Clear, accurate data visualization standards\",\n        \"adaptive_personalization\": \"string - Tailored feel with consistent patterns\"\n      }\n    },\n    \"quality_checklist\": [\n      \"string - Clarity First: Does every visual element serve a clear educational purpose?\",\n      \"string - Progressive Disclosure: Is information presented in logical, digestible layers?\",\n      \"string - Data-Driven Confidence: Are data visualizations clear, accurate, and trustworthy?\",\n      \"string - Adaptive Personalization: Does the design feel tailored while maintaining consistency?\",\n      \"string - Color Compliance: Are all colors from the approved design language palette?\",\n      \"string - Typography Consistency: Is Inter font family used with correct scales throughout?\",\n      \"string - Spacing Accuracy: Is the 8px base unit system applied correctly?\",\n      \"string - Accessibility Standards: Does the image meet WCAG 2.1 AA compliance (4.5:1 contrast for normal text, 3:1 for large text)?\",\n      \"string - Educational Effectiveness: Does the image clearly support the identified learning objective?\",\n      \"string - Production Readiness: Are dimensions, format, and technical specifications correct?\"\n    ],\n    \"placement\": [\n      {\n        \"image_number\": \"integer\",\n        \"placement_location\": \"string - Exact location description (After paragraph starting with... or Between sections X and Y)\",\n        \"context_relationship\": \"string - How the image relates to surrounding content\",\n        \"strategic_positioning\": \"string - Why this placement supports the educational goal\"\n      }\n    ],\n    \"orientation\": [\n      {\n        \"image_number\": \"integer\",\n        \"orientation_type\": \"string - Landscape/Portrait/Square\",\n        \"rationale\": \"string - Why this orientation best serves the content and placement\",\n        \"dimensions_recommendation\": \"string - Specific pixel dimensions or aspect ratio\"\n      }\n    ]\n  }\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -2048,
+        576
+      ],
+      "id": "3f36856a-f5b1-46d0-b1a5-b8436548e455",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 25000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -2112,
+        784
+      ],
+      "id": "66d7a83b-c234-4ee2-abad-0b8332b5bf46",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FhEfp5o6KwTR70QY",
+          "name": "SK OpenRouter Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b5f8486b-0d09-4322-9b78-c87afe27ff97",
+              "name": "output.article_images",
+              "value": "={{ $json.output.article_images }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1728,
+        368
+      ],
+      "id": "2284f75d-61f4-431b-9ece-d54270290e95",
+      "name": "images_spec"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.article_images",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1536,
+        368
+      ],
+      "id": "fb557b6c-6451-49cf-84dd-a0c9f7fef1bf",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1280,
+        368
+      ],
+      "id": "cec6a443-2f88-42bf-9fc0-0df7d18c3b58",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        384
+      ],
+      "id": "7369fa8d-698c-492b-9ef7-09f858b564f7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5d0666b2-e474-43b3-aab1-3a379c461efb",
+              "name": "image_spec",
+              "value": "={{ JSON.stringify($('Loop Over Items').item.json) }}",
+              "type": "string"
+            },
+            {
+              "id": "cb41c39d-07bc-4d35-8ac9-ec9bea1dcb8b",
+              "name": "image_name",
+              "value": "={{ $now.year }}{{ $now.month.toString().padStart(2, '0') }}{{ $now.day.toString().padStart(2, '0') }}-{{ $now.hour.toString().padStart(2, '0') }}{{ $now.minute.toString().padStart(2, '0') }}{{ $now.second.toString().padStart(2, '0') }}.png",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -816,
+        384
+      ],
+      "id": "63c35335-0b4d-4ca2-990a-115767b38cc4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {
+          "fileName": "={{ $('Loop Over Items').item.json.image_number }}.png"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -304,
+        384
+      ],
+      "id": "f7b1ba11-e8b6-48f7-b0c7-2177c645160a",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Input').item.json.article_name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "17mLbQLnb5FLYTGPpReIoYv8L55Q5DREO",
+          "mode": "list",
+          "cachedResultName": "Article_Images_Strategy",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/17mLbQLnb5FLYTGPpReIoYv8L55Q5DREO"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2464,
+        368
+      ],
+      "id": "d1cc719d-0d65-4e20-98bd-b09bc58e50d2",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8GMvwnRLMy9a7V46",
+          "name": "Google Drive account - SK"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -16,
+        32
+      ],
+      "id": "d7d1ff12-4763-44b2-b336-f6848d547439",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8GMvwnRLMy9a7V46",
+          "name": "Google Drive account - SK"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "# HARVARD-Level Image Reviewer Instructions\n\nI want you to act as a **HARVARD-level image reviewer**. I want you to evaluate an image and check for errors and return the specifications to correct the image",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=# HARVARD-Level Image Reviewer Instructions\n\nI want you to act as a **HARVARD-level image reviewer**. I want you to evaluate an image and check for the following:\n\n1. Spelling errors\n2. Grammatical errors\n3. Mathematical accuracy (verify all equations, calculations, and numerical relationships)\n4. Any words or sentences overlapping\n\n## Inputs:\n- Original Prompt for the image\n- Image\n\n## Process:\n\n### Step 1: Complete Text Extraction (Enhanced)\n- Systematically scan the image. For example, if the image has a chart, start from one of the edges and proceed strategically till you reach the diagonally opposite edge. If the image is a flow chart, decide the scanning strategy to ensure a comprehensive scan.\n- Pay special attention to vertically-oriented text, rotated text, and text in margins. Ensure correct spelling - rotate the text to proper orientation to extract the written spelling if needed.\n- Extract and LIST every single word/phrase found in the image, noting its location (e.g., \"right y-axis: [text found]\")\n- Do not rely on expectation - read each word letter-by-letter, especially for technical terms\n- Double-check any text that appears in unusual orientations or positions\n- Only AFTER completing this comprehensive list, proceed to spell-checking each extracted item\n\n**\"Before proceeding to any error analysis, you MUST provide a complete numbered list showing:**\n1. [Location] - [Exact text found]\n2. [Location] - [Exact text found]\netc.\n\n**Do not proceed to Step 2 until this list contains every visible text element. State 'EXTRACTION COMPLETE' only after this list is provided.\"**\n\n#### Step 1.1: Self-Verification\n- Re-read your extraction list\n- For each header, count the words (flag any duplications)\n- For each bullet point, spell out any technical terms letter-by-letter\n- Acknowledge any areas where text might be unclear and state your interpretation.\n\n#### Step 1.2: Mandatory Prompt Cross-Reference\nBefore proceeding to any error analysis, you MUST systematically verify each extracted element against the original prompt:\n\n- For each extracted element: Quote the relevant section from the original prompt that specifies what this element should contain/display\n- Explicit comparison: State \"Prompt specifies: [exact quote]\" vs \"Image shows: [what you extracted]\"\n- Flag all discrepancies: Any difference between prompt specification and image content must be noted as a potential error\n- No assumptions: Do not assume anything is \"correct by design standards\" - the original prompt is the sole authority\n- Coverage requirement: Every major content element mentioned in the prompt must be accounted for in your extraction and verified\n\n**Format for this step:**\n- **PROMPT SPECIFICATION:** [Quote from original prompt]\n- **IMAGE REALITY:** [What I actually see]\n- **STATUS:** [MATCH / MISMATCH - explain discrepancy]\n\n**Checkpoint:** Only after completing this cross-reference verification for all major elements, state \"PROMPT CROSS-REFERENCE COMPLETE\" and proceed to Step 2.\n\n### Step 2: Find Spelling Errors\n- Extract all the words from the image.\n- Check their spelling. Refer to the image prompt if you cannot decide on the correct spelling.\n- If there is any spelling error, add them to the fix list.\n- Before concluding the review, re-examine any technical terms, proper nouns, or domain-specific vocabulary with extra scrutiny\n\n#### Step 2.1: Mathematical Accuracy Verification\n- Identify all mathematical expressions, equations, calculations, and numerical relationships in the image\n- Independently verify each mathematical statement for accuracy\n- Check that equations balance correctly (left side = right side)\n- Verify all arithmetic calculations step-by-step\n- Cross-reference any mathematical relationships with the original prompt context\n- If mathematical errors are found, add them to the fix list with the correct mathematical expressions\n- Do not assume mathematical content is correct based on context - always compute independently\n\n### Step 3: Find Grammar Errors\n- Review all the sentences and check for grammatical errors. Do not worry about spelling as they have already been taken care of.\n- Add the same to the fix list with the recommended fix. Refer to the image prompt if needed.\n\n### Step 4: Check formatting/overlapping errors\n- Review the image and check if any words are overlapping or are in a position where they do not belong. Refer to the image prompt if needed.\n- For every overlapping or out of place word/sentence, strategize where it should be placed\n- Add them to the fix list, providing clear instructions where the word/line should be.\n\n### Step 5: Overall Quality Check\n- Make sure that all the fixes are documented in a manner that an image generation prompt can receive them and fix the same.\n- Do not add any new content.\n\n\n# Output format\nYour final output should follow the below JSON Structure for each change sent as a list of json objects as per the provided structure for each change, Note that if changes_required is NO, then changes_detailes should be null []\n\n{\n\"changes_required\": \"[YES or NO]\",\n\"changes_count\": \"[Specify Number of Changes, if changes_required is NO, then this value should be 0]\",\n\"changes_details\":[\n  {\n  \"change_number\": \"integer\",\n    \"location\": \"[specific area/position in image]\",\n    \"replace\": {\n      \"current_content\": \"[current content]\",\n      \"correct_content\": \"[correct content]\"\n    },\n    \"design\": \"[styling/positioning requirements if needed]\"\n  }]\n}"
+            },
+            {
+              "type": "HumanMessagePromptTemplate",
+              "messageType": "imageBinary",
+              "imageDetail": "high"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -32,
+        384
+      ],
+      "id": "1569748c-1d04-4eaf-a7e7-2a041c52b7f3",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {
+          "maxTokensToSample": 18000,
+          "thinking": true,
+          "thinkingBudget": 8000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -96,
+        592
+      ],
+      "id": "08a4f561-3c29-4521-994b-777a52a704e1",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "VyW2FNpKrdqxpkCy",
+          "name": "Anthropic OQ Connect"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\"changes_required\": \"[YES or NO]\",\n\"changes_count\": \"[Specify Number of Changes, if changes_required is NO, then this value should be 0]\",\n\"changes_details\":[\n  {\n  \"change_number\": \"integer\",\n    \"location\": \"[specific area/position in image]\",\n    \"replace\": {\n      \"current_content\": \"[current content]\",\n      \"correct_content\": \"[correct content]\"\n    },\n    \"design\": \"[styling/positioning requirements if needed]\"\n  }]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        112,
+        592
+      ],
+      "id": "bf259f3e-3cc6-4370-93a4-1aa57baa6b23",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 25000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        48,
+        800
+      ],
+      "id": "dc86bbb7-3bec-40e2-9f5a-144246a21b3a",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "FhEfp5o6KwTR70QY",
+          "name": "SK OpenRouter Connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ed402e14-6682-4c9d-9094-600f39fb7af1",
+              "leftValue": "={{ $('Basic LLM Chain').item.json.output.changes_required }}",
+              "rightValue": "YES",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        384
+      ],
+      "id": "b29fc772-f614-4216-b165-236f0d3e0855",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c58638d6-d1da-45a1-85fe-70394d026321",
+              "name": "prompt",
+              "value": "={{ $('Basic LLM Chain').item.json.output.changes_details }}",
+              "type": "array"
+            },
+            {
+              "id": "bfff2f8a-7373-49d6-b544-88d418b38dcc",
+              "name": "image_url",
+              "value": "={{ $('Search records3').item.json['interim-image-link'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        368
+      ],
+      "id": "dd9c7ec5-193e-4876-8819-12d5d029e954",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/images/edits",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "multipart/form-data"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "gpt-image-1.5"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ JSON.stringify($('Edit Fields1').item.json.prompt) }}"
+            },
+            {
+              "name": "n",
+              "value": "1"
+            },
+            {
+              "name": "background",
+              "value": "opaque"
+            },
+            {
+              "name": "quality",
+              "value": "high"
+            },
+            {
+              "name": "input_fidelity",
+              "value": "low"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1648,
+        368
+      ],
+      "id": "5e644c12-6704-4c49-a18b-bcf5f5da08e6",
+      "name": "HTTP Request1",
+      "credentials": {
+        "openAiApi": {
+          "id": "kk8aePAtHTqLegML",
+          "name": "OpenAi Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Edit Fields1').item.json.image_url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1408,
+        368
+      ],
+      "id": "24eec00e-7518-4b28-b66a-4abef50d22ac",
+      "name": "download image"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  body: {\n    model: \"gpt-image-1\",\n    prompt: \"Add a horse in the background\",\n    n: 1,\n    size: \"1024x1024\",\n  },\n  binary: {\n    image: $('download image').first().binary.data\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        224
+      ],
+      "id": "60d7ab2a-7b14-4ae7-b6d1-93b6d15ee8f4",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data[0].b64_json",
+        "options": {
+          "fileName": "={{ $('Loop Over Items').item.json.image_number }}_final.png"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1872,
+        368
+      ],
+      "id": "cccc19f3-42c2-4423-8287-535efbe7e81e",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2112,
+        368
+      ],
+      "id": "46328cf9-6536-46f5-8847-40098322a5bf",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "8GMvwnRLMy9a7V46",
+          "name": "Google Drive account - SK"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "=app1QhwgXE2neWore",
+          "mode": "id"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbloI9ylGx7IloshU",
+          "mode": "list",
+          "cachedResultName": "Output",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbloI9ylGx7IloshU"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "article_name": "={{ $('Input').item.json.article_name }}",
+            "image_link": "={{ $('Upload file').item.json.webViewLink }}",
+            "image_name": "={{ $('Upload file').item.json.name }}",
+            "Placement": "={{ $('Loop Over Items').item.json.placement }}",
+            "article_id": "={{ $('Input').item.json.article_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "article_id",
+              "displayName": "article_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Placement",
+              "displayName": "Placement",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "image_name",
+              "displayName": "image_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "image_link",
+              "displayName": "image_link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rowSequence",
+              "displayName": "rowSequence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "changes_text",
+              "displayName": "changes_text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "interim-image-link",
+              "displayName": "interim-image-link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        32
+      ],
+      "id": "30c4e15b-a86a-42d4-914f-875c836b2cf1",
+      "name": "Create a record1",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbloI9ylGx7IloshU",
+          "mode": "list",
+          "cachedResultName": "Output",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbloI9ylGx7IloshU"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search records1').item.json.id }}",
+            "image_name": "={{ $('Upload file1').item.json.name }}",
+            "image_link": "={{ $('Upload file1').item.json.webViewLink }}",
+            "changes_text": "={{ JSON.stringify($('Basic LLM Chain').item.json.output.changes_details) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "position",
+              "displayName": "position",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "image_name",
+              "displayName": "image_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "image_link",
+              "displayName": "image_link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rowSequence",
+              "displayName": "rowSequence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "changes_text",
+              "displayName": "changes_text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2576,
+        368
+      ],
+      "id": "b5456ac5-777a-4ccb-bd20-cc33f948a213",
+      "name": "Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbloI9ylGx7IloshU",
+          "mode": "list",
+          "cachedResultName": "Output",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbloI9ylGx7IloshU"
+        },
+        "filterByFormula": "=AND({article_id}={{ JSON.stringify($('Input').item.json.article_id) }},{article_name}={{ JSON.stringify($('Input').item.json.article_name) }},{image_name}='{{ $('Loop Over Items').item.json.image_number }}.png')",
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "rowSequence"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2320,
+        368
+      ],
+      "id": "cb49a7e5-3120-4ab9-9677-51bf988a1386",
+      "name": "Search records1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllyjGKHOQixiDWu",
+          "mode": "list",
+          "cachedResultName": "Input",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbllyjGKHOQixiDWu"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Input').item.json.record_id_input }}",
+            "status": "Complete"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "article_content_text",
+              "displayName": "article_content_text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "file_location",
+              "displayName": "file_location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Not Started",
+                  "value": "Not Started"
+                },
+                {
+                  "name": "Complete",
+                  "value": "Complete"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rowSequence'",
+              "displayName": "rowSequence'",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1040,
+        224
+      ],
+      "id": "d746b355-9566-4df3-beda-49acb5526f1f",
+      "name": "Update record1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllyjGKHOQixiDWu",
+          "mode": "list",
+          "cachedResultName": "Input",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbllyjGKHOQixiDWu"
+        },
+        "id": "={{ $('Reddit_Article_Image_Generator').item.json.body.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -2928,
+        272
+      ],
+      "id": "aadb7248-b7ba-4c90-b581-27e3aefb466c",
+      "name": "Get a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3568,
+        368
+      ],
+      "id": "ca678870-ff76-4b5a-b9d1-692ac269ce07",
+      "name": "Reddit_Article_Image_Generator"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://freeimage.host/api/1/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "6d207e02198a847aa98d0a2a901485a5"
+            },
+            {
+              "name": "action",
+              "value": "upload"
+            },
+            {
+              "name": "format",
+              "value": "json"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "source",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        208
+      ],
+      "id": "1e848d93-aa5f-4dc3-b9c5-edaba77d16bd",
+      "name": "FreeImage.host"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbloI9ylGx7IloshU",
+          "mode": "list",
+          "cachedResultName": "Output",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbloI9ylGx7IloshU"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Search records2').item.json.id }}",
+            "interim-image-link": "={{ $('FreeImage.host').item.json.image.url }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "article_name",
+              "displayName": "article_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "position",
+              "displayName": "position",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "image_name",
+              "displayName": "image_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "image_link",
+              "displayName": "image_link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "rowSequence",
+              "displayName": "rowSequence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "changes_text",
+              "displayName": "changes_text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "interim-image-link",
+              "displayName": "interim-image-link",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        432,
+        208
+      ],
+      "id": "91baa44c-b530-4c03-b676-de6bc0d7e0ac",
+      "name": "Update record2",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbloI9ylGx7IloshU",
+          "mode": "list",
+          "cachedResultName": "Output",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbloI9ylGx7IloshU"
+        },
+        "filterByFormula": "=AND({article_id}={{ JSON.stringify($('Input').item.json.article_id) }},{article_name}={{ JSON.stringify($('Input').item.json.article_name) }},{image_name}='{{ $('Loop Over Items').item.json.image_number }}.png')",
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "rowSequence"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        208
+      ],
+      "id": "c761c770-f20b-4d83-89f0-dacc0e6fd6a0",
+      "name": "Search records2",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbloI9ylGx7IloshU",
+          "mode": "list",
+          "cachedResultName": "Output",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbloI9ylGx7IloshU"
+        },
+        "filterByFormula": "=AND({article_id}={{ JSON.stringify($('Input').item.json.article_id) }},{article_name}={{ JSON.stringify($('Input').item.json.article_name) }},{image_name}='{{ $('Loop Over Items').item.json.image_number }}.png')",
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "rowSequence"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        368
+      ],
+      "id": "256986e7-0a56-4ebb-8a9a-de215347d979",
+      "name": "Search records3",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a4408196-a88f-490c-acf3-d63c9793758f",
+              "leftValue": "={{ $('Reddit_Article_Image_Generator').item.json.body.recordId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3360,
+        368
+      ],
+      "id": "d46c41bb-f479-4ccf-94dc-91c6703e50b2",
+      "name": "POST or GET"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "app1QhwgXE2neWore",
+          "mode": "list",
+          "cachedResultName": "Reddit Articles",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbllyjGKHOQixiDWu",
+          "mode": "list",
+          "cachedResultName": "Input",
+          "cachedResultUrl": "https://airtable.com/app1QhwgXE2neWore/tbllyjGKHOQixiDWu"
+        },
+        "id": "={{ $('Reddit_Article_Image_Generator').item.json.query.recordId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -2912,
+        544
+      ],
+      "id": "5446e9bb-5518-4f84-a3e5-a085ea1d9f5c",
+      "name": "Get a record1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "mBWpBYRPP7yB8lfE",
+          "name": "Airtable LMP Onboarding PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "zRkKa5cHBuUxxJ8Q",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/zRkKa5cHBuUxxJ8Q",
+          "cachedResultName": "10. OQ_Connect — Create Complete Article with images"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -512,
+        224
+      ],
+      "id": "2f509ffb-1438-49af-b83b-549e829bfbbf",
+      "name": "Create Complete Article with Images"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        224
+      ],
+      "id": "4712dfc2-1b47-4bac-9d54-f44378ba9a3c",
+      "name": "Limit to 1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "maxTokens": 30000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1952,
+        784
+      ],
+      "id": "736fbfa0-55d8-41e7-955c-45cbdc622da8",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "kk8aePAtHTqLegML",
+          "name": "OpenAi Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "maxTokens": 30000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        768
+      ],
+      "id": "096abbc0-682b-41d3-a850-e1e7c511c238",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "kk8aePAtHTqLegML",
+          "name": "OpenAi Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input": {
+      "main": [
+        [
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image_Req_Generation": {
+      "main": [
+        [
+          {
+            "node": "images_spec",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image_Req_Generation",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Image_Req_Generation",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "images_spec": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Update record1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "FreeImage.host",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "Image_Req_Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Create a record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Search records3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "download image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download image": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Search records1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records1": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record1": {
+      "main": [
+        [
+          {
+            "node": "Limit to 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record": {
+      "main": [
+        [
+          {
+            "node": "Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reddit_Article_Image_Generator": {
+      "main": [
+        [
+          {
+            "node": "POST or GET",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FreeImage.host": {
+      "main": [
+        [
+          {
+            "node": "Search records2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records2": {
+      "main": [
+        [
+          {
+            "node": "Update record2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST or GET": {
+      "main": [
+        [
+          {
+            "node": "Get a record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a record1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record1": {
+      "main": [
+        [
+          {
+            "node": "Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit to 1": {
+      "main": [
+        [
+          {
+            "node": "Create Complete Article with Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b37509715b18abc5c914305991fb08b944e778bd2b6f7779ac022f6bac258788"
+  }
+}
