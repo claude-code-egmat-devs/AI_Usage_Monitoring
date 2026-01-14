@@ -1,0 +1,13 @@
+# Claude Code Monitor Dependencies
+
+# HTTP client
+requests>=2.28.0
+
+# Web framework (for aggregator)
+flask>=2.3.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# Production WSGI server (VPS only)
+gunicorn>=21.0.0; sys_platform != 'win32'

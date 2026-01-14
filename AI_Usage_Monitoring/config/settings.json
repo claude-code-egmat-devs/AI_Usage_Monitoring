@@ -1,0 +1,43 @@
+{
+  "thresholds": {
+    "daily_warning_usd": 5.00,
+    "daily_critical_usd": 10.00,
+    "monthly_budget_usd": 100.00,
+    "budget_alert_percent": 80,
+    "error_alert_count": 5,
+    "error_alert_window_minutes": 60
+  },
+  "teams": {
+    "power_automate_url": "https://default3d3687dac2844b2688ebebeae8bb5c.e4.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/12d10235822c4b54957e5992fbd46af1/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=lVKt9qA29_M-NJawf00bA0FNVCYnTjRXnvkgTmAaqqQ",
+    "chat_id": "19:6b770ebf9b5c44c1bdd3fafca6fc06bd@thread.v2",
+    "agent_email": "brian@e-gmat.com"
+  },
+  "pricing": {
+    "claude-sonnet-4-5-20250929": {
+      "input_per_million": 3.00,
+      "output_per_million": 15.00,
+      "cache_write_per_million": 3.75,
+      "cache_read_per_million": 0.30
+    },
+    "claude-haiku-4-5-20251001": {
+      "input_per_million": 0.80,
+      "output_per_million": 4.00,
+      "cache_write_per_million": 1.00,
+      "cache_read_per_million": 0.08
+    }
+  },
+  "apps": {
+    "Sales_Forecasting": {
+      "log_file": "/home/Sales-Enhancements/E5_Sales_Call_Forecasting_Dashboard/logs/ai_usage.jsonl",
+      "description": "Sales Call Forecasting Dashboard"
+    },
+    "Sales_Forecasting_QA": {
+      "log_file": "/home/Sales-Enhancements/E5_Sales_Call_Forecasting_Dashboard_QA/logs/ai_usage.jsonl",
+      "description": "Sales Call Forecasting Dashboard (QA)"
+    }
+  },
+  "schedule": {
+    "daily_report_time_utc": "18:00",
+    "timezone": "Asia/Kolkata"
+  }
+}

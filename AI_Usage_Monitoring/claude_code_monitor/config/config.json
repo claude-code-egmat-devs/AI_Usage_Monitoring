@@ -1,0 +1,49 @@
+{
+  "anthropic_account": "success@e-gmat.com",
+  "thresholds": {
+    "daily_warning_usd": 35,
+    "daily_critical_usd": 45,
+    "daily_limit_usd": 50,
+    "weekly_limit_usd": 250,
+    "monthly_limit_usd": 1000
+  },
+  "pricing": {
+    "claude-opus-4-5-20251101": {
+      "input_per_million": 15.00,
+      "output_per_million": 75.00,
+      "cache_write_per_million": 18.75,
+      "cache_read_per_million": 1.50
+    },
+    "claude-sonnet-4-5-20250929": {
+      "input_per_million": 3.00,
+      "output_per_million": 15.00,
+      "cache_write_per_million": 3.75,
+      "cache_read_per_million": 0.30
+    },
+    "claude-sonnet-4-20250514": {
+      "input_per_million": 3.00,
+      "output_per_million": 15.00,
+      "cache_write_per_million": 3.75,
+      "cache_read_per_million": 0.30
+    },
+    "claude-haiku-3-5-20241022": {
+      "input_per_million": 0.80,
+      "output_per_million": 4.00,
+      "cache_write_per_million": 1.00,
+      "cache_read_per_million": 0.08
+    }
+  },
+  "teams": {
+    "power_automate_url": "PLACEHOLDER_URL",
+    "chat_id": "PLACEHOLDER_CHAT_ID",
+    "agent_email": "PLACEHOLDER_EMAIL"
+  },
+  "aggregator": {
+    "url": "http://srv1140745.hstgr.cloud:8011",
+    "port": 8011
+  },
+  "schedule": {
+    "report_time_utc": "18:00",
+    "check_interval_hours": 4
+  }
+}
