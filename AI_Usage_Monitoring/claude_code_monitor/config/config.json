@@ -39,7 +39,7 @@
     "agent_email": "PLACEHOLDER_EMAIL"
   },
   "aggregator": {
-    "url": "http://srv1140745.hstgr.cloud:8011",
+    "url": "https://srv1140745.hstgr.cloud/claude-monitor",
     "port": 8011
   },
   "schedule": {
