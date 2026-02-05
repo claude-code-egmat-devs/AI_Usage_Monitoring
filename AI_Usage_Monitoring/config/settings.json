@@ -62,6 +62,21 @@
         "cost_usd": "cost_usd",
         "purpose": "purpose"
       }
+    },
+    "SAT_Forum_Responder": {
+      "adapter_type": "jsonl",
+      "log_file": "/home/.ai_monitoring/logs/SAT_Forum_Responder.jsonl",
+      "description": "SAT Forum Responder - Claude Opus 4.5"
+    },
+    "GMAT_Forum_Responder": {
+      "adapter_type": "jsonl",
+      "log_file": "/home/.ai_monitoring/logs/GMAT_Forum_Responder.jsonl",
+      "description": "GMAT Forum Responder - Claude Opus 4.5"
+    },
+    "EGMAT_Forum_Responder": {
+      "adapter_type": "jsonl",
+      "log_file": "/home/.ai_monitoring/logs/EGMAT_Forum_Responder.jsonl",
+      "description": "e-GMAT Forum Responder - Claude Opus 4.5"
     }
   },
   "schedule": {
