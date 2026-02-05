@@ -28,12 +28,40 @@
   },
   "apps": {
     "Sales_Forecasting": {
+      "adapter_type": "jsonl",
       "log_file": "/home/Sales-Enhancements/E5_Sales_Call_Forecasting_Dashboard/logs/ai_usage.jsonl",
       "description": "Sales Call Forecasting Dashboard"
     },
     "Sales_Forecasting_QA": {
+      "adapter_type": "jsonl",
       "log_file": "/home/Sales-Enhancements/E5_Sales_Call_Forecasting_Dashboard_QA/logs/ai_usage.jsonl",
       "description": "Sales Call Forecasting Dashboard (QA)"
+    },
+    "Sales_Agent_Form": {
+      "adapter_type": "daily_rotating",
+      "log_dir": "/home/Sales-Enhancements/E4_Update_Prospect_Records_0/logs",
+      "file_pattern": "ai_requests_*.jsonl",
+      "description": "Sales Agent Form (E4)"
+    },
+    "Sales_Agent_Form_QA": {
+      "adapter_type": "daily_rotating",
+      "log_dir": "/home/Sales-Enhancements/E4_Update_Prospect_Records_0_QA/logs",
+      "file_pattern": "ai_requests_*.jsonl",
+      "description": "Sales Agent Form QA (E4)"
+    },
+    "SOV_GC": {
+      "adapter_type": "supabase",
+      "table": "llm_token_usage",
+      "timestamp_column": "created_at",
+      "description": "SOV GC - Reddit Content Generator",
+      "column_mapping": {
+        "timestamp": "created_at",
+        "model": "model",
+        "input_tokens": "input_tokens",
+        "output_tokens": "output_tokens",
+        "cost_usd": "cost_usd",
+        "purpose": "purpose"
+      }
     }
   },
   "schedule": {
